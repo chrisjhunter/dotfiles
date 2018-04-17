@@ -1,0 +1,7 @@
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{=kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B}%Y-%m-%d %{W}%c%{g}]'
+term="screen-256color"
+screen -t vim-go 0 bash
+screen -t cli 1 bash
+select 0
+defscrollback 100000
