@@ -11,7 +11,7 @@
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
 " vim ./* ./*/* - open recursively, 1 dir deep
-" C-v , pick columns, shift+i , then type, then esc
+" C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
 
 "Execute pathogen plugins
@@ -29,26 +29,28 @@ set background=dark
 "colorscheme gruvbox
 "colorscheme xoria256
 "colorscheme vombatidae
-colorscheme sorcerer
 "colorscheme slate
 "colorscheme SlateDark
 "colorscheme vividchalk
 "colorscheme distinguished
 "colorscheme monokai
 "colorscheme znake
-"colorscheme vimbrant
 "colorscheme vibrantink
-"colorscheme woju
 "colorscheme molokai
-
 "colorscheme  256-grayvim
-"colorscheme ir_black
 "colorscheme  ir_dark_gray  "same as ir_black
+
+"colorscheme ir_black
+
+"colorscheme woju
+"colorscheme vimbrant
+"colorscheme sorcerer
 colorscheme monokai_curs    "golang cli
 "colorscheme badwolf
 "colorscheme dracula
 "colorscheme Tomorrow-Night-Bright
 "colorscheme smyck
+
 
 "=======================me-from-random=======================
 "move by lines on screen, instead of linenumber
@@ -56,6 +58,15 @@ nnoremap j gj
 nnoremap k gk
 nnoremap <up> gk
 nnoremap <down> gj
+
+"Equalize height and width of all windows
+nnoremap <silent> <leader>= <C-W>=
+"Ctrl+W +/-: increase/decrease height (ex. 20<C-w>+)
+"Ctrl+W >/<: increase/decrease width (ex. 30<C-w><)
+"Ctrl+W _: set height (ex. 50<C-w>_)
+"Ctrl+W |: set width (ex. 50<C-w>|)
+"Ctrl+W =: equalize width and height of all windows
+" :help CTRL-W
 
 "nnoremap <C-[> :pop<CR>
 set nowrap
@@ -88,6 +99,13 @@ let g:go_highlight_build_constraints = 1
 "make git diff / log coloring static
 hi diffAdded   ctermfg=green
 hi diffRemoved ctermfg=red
+
+if &diff
+        highlight DiffAdd term=reverse cterm=bold ctermbg=green ctermfg=black
+        highlight DiffChange term=reverse cterm=bold ctermbg=cyan ctermfg=black
+        highlight DiffText term=reverse cterm=bold ctermbg=red ctermfg=black
+        highlight DiffDelete term=reverse cterm=bold ctermbg=red ctermfg=black
+endif
 
 "set clipboard^=unnamed           " Attempt to use MacOS system clipboard ( not working )
 set clipboard=unnamedplus
@@ -198,24 +216,26 @@ nnoremap <leader>x :Sex<CR>
 " will insert tab at beginning of line,
 " will use completion if not at beginning
 set wildmode=list:longest,list:full
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
-inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <S-Tab> <c-n>
+"function! InsertTabWrapper()
+    "let col = col('.') - 1
+    "if !col || getline('.')[col - 1] !~ '\k'
+        "return "\<tab>"
+    "else
+        "return "\<c-p>"
+    "endif
+"endfunction
+"inoremap <Tab> <c-r>=InsertTabWrapper()<cr>
+"inoremap <S-Tab> <c-n>
 
 " . scan the current buffer, b scan other loaded buffers that are in the buffer list, u scan the unloaded buffers that 
 " are in the buffer list, w scan buffers from other windows, t tag completion
-set complete=.,b,u,w,t,]
+"set complete=.,b,u,w,t,]
 
 " Keyword list
-set complete+=k
+"set complete+=k
 "set complete+=k~/.vim/keywords.txt
+"=======================jose de la o=======================
+let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 "=======================trishume=======================
 " set autowrite                  " automatically write a file when leaving a modified buffer
 set undolevels=1000         "maximum number of changes that can be undone
@@ -382,8 +402,8 @@ set hlsearch                   " Highlight matches
 "=======================benjamin g=========================
 
 "bigger cursor movements
-nnoremap <C-j> 10j
-nnoremap <C-k> 10k
+"nnoremap <C-j> 10j
+"nnoremap <C-k> 10k
 
 "Switch windows
 nnoremap <C-L> <C-W><C-L>
@@ -488,8 +508,10 @@ inoremap <F1> <esc>:checktime<cr>
 
 " Inserting blank lines
 " " I never use the default behavior of <cr> and this saves me a keystroke...
-nnoremap <cr> o<esc>
-"set modifiable
+"
+" Enabling this newline shortcut breaks ack search w/ jumping to file
+"nnoremap <cr> o<esc>
+set modifiable
 
 "=================witzel3================
 nnoremap <leader>b :buffers <cr>
