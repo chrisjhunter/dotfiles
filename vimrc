@@ -14,8 +14,29 @@
 " C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
 
+"=======================vimplug=======================
+" For Mac/Linux users
+call plug#begin('~/.vim/bundle')
+
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'fatih/vim-go'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-ruby/vim-ruby'
+Plug 'mileszs/ack.vim'
+Plug 'EinfachToll/DidYouMean'
+Plug 'zhaocai/minibufexpl.vim'
+Plug 'tyru/regbuf.vim'
+Plug 'dahu/vim-lotr'
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-vinegar'
+Plug 'vim-scripts/scratch.vim'
+call plug#end()
+
+
+"=======================endplug=======================
 "Execute pathogen plugins
-execute pathogen#infect()
+"execute pathogen#infect()
 syntax on                       " Syntax hi-lighting
 set syntax=enable
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
@@ -82,7 +103,14 @@ endif
 " List contents of all registers (that typically contain pasteable text).
 " https://stackoverflow.com/questions/1497958/how-do-i-use-vim-registers
 " usage "<register number> <action>
-nnoremap <silent> "" :registers "0123456789abcdefghijklmnopqrstuvwxyz*+.<CR>
+"nnoremap <silent> "" :registers "0123456789abcdefghijklmnopqrstuvwxyz*+.<CR>
+"nnoremap <silent> "" :RegbufOpen <CR>
+nnoremap <silent> "" :registers <CR>
+"nnoremap <silent><leader>L :LOTRToggle<cr>
+"nnoremap <silent><leader>L :LOTRToggle<cr>
+
+"autocmd TextYankPost :vsplit 
+"autocmd TextYankPost * call RegbufOpen
 
 "http://vim.wikia.com/wiki/Avoid_the_escape_key
 "exit insert using C-space
@@ -138,13 +166,11 @@ endif
 cnoreabbrev Ack Ack!
 nnoremap <Leader>g :Ack!<Space>
 
-"Attempt to ignore golden ratio in file tree
-"ended up using
-"|| NetrwTreeListing
-"if &buftype == ""
-    "let b:golden_ratio_resizing_ignored = 1
-    "let g:golden_ratio_exclude_nonmodifiable = 1
-"endif
+
+" These mappings will make it so that going to the next one in a search will
+" center on the line it's found in.
+nnoremap n nzzzv
+nnoremap N Nzzzv
 
 set shiftwidth=4                " Control how many columns text is indented with the reindent operations (<< and >>)
 "=======================statico=======================
@@ -234,8 +260,6 @@ set wildmode=list:longest,list:full
 " Keyword list
 "set complete+=k
 "set complete+=k~/.vim/keywords.txt
-"=======================jose de la o=======================
-let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 "=======================trishume=======================
 " set autowrite                  " automatically write a file when leaving a modified buffer
 set undolevels=1000         "maximum number of changes that can be undone
@@ -418,7 +442,6 @@ nnoremap <D-RIGHT> <C-W>>
 "go specific stuffs
 let g:go_fmt_command = "goimports"
 nnoremap <C-G> :! go run %<CR>
-nnoremap <C-T> :! go test<CR>
 nnoremap <C-F> gg ''
 
 "=================stevelosh================
@@ -456,7 +479,7 @@ nnoremap <leader>1 yypVr=
  " Persistent undo
 set undofile
 set undodir=~/.vim/tmp/undo//
-"set noswapfile                  " Don't use swapfile
+set noswapfile                  " Don't use swapfile
 "Prefer to use undo files atm 5/2017 ... might turn it back on
 set backup
 set backupdir=~/.vim/tmp/backup//
@@ -503,6 +526,7 @@ set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 
 " F@$% you, help key.
+autocmd FileType help wincmd L
 noremap  <F1> :checktime<cr>
 inoremap <F1> <esc>:checktime<cr>
 
