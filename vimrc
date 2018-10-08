@@ -37,18 +37,6 @@ call plug#end()
 " ----------------------------------------------------------------------------
 "  Endplug 
 " ----------------------------------------------------------------------------
-"  Colors 
-" ----------------------------------------------------------------------------
-set background=dark
-colorscheme monokai_curs    "golang cli
-
-" Highlight
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-
 " ----------------------------------------------------------------------------
 "  General Config
 " ----------------------------------------------------------------------------
@@ -115,6 +103,19 @@ set wildignore+=migrations                       " Django migrations
 set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 set wildignorecase              " Ignore case when completing file names and directories.
+
+" ----------------------------------------------------------------------------
+"  Colors 
+" ----------------------------------------------------------------------------
+set background=dark
+colorscheme monokai_curs    "golang cli
+
+" Highlight
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 
 " ----------------------------------------------------------------------------
 "  Custom Settings 
