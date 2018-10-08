@@ -1,12 +1,10 @@
 "Vimrc
 
+" ----------------------------------------------------------------------------
+" Don't want to forget these
+" ----------------------------------------------------------------------------
 ":! go run % -d=debug
-" Type :so % to refresh .vimrc after making changes
-" :vsp | b1 - vertcal split buffer #
-" :reg
 " :find <regex>
-" :Explore
-" :Vexplore
 " :b <regex>
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
@@ -14,7 +12,9 @@
 " C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
 
-" ======================= Vimplug =======================
+" ----------------------------------------------------------------------------
+" Vimplug
+" ----------------------------------------------------------------------------
 " For Mac/Linux users
 call plug#begin('~/.vim/bundle')
 
@@ -34,9 +34,11 @@ Plug 'tpope/vim-vinegar'
 Plug 'vim-scripts/scratch.vim'
 call plug#end()
 
-" ======================= Endplug =======================
-
-" ======================= Colors =======================
+" ----------------------------------------------------------------------------
+"  Endplug 
+" ----------------------------------------------------------------------------
+"  Colors 
+" ----------------------------------------------------------------------------
 set background=dark
 colorscheme monokai_curs    "golang cli
 
@@ -46,9 +48,10 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
-" ================ Remaps =======================
-" ================ General Config =======================
 
+" ----------------------------------------------------------------------------
+"  General Config
+" ----------------------------------------------------------------------------
 syntax on                       " Syntax hi-lighting
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
 set syntax=enable
@@ -94,8 +97,10 @@ set backup
 set backupdir=~/.vim/tmp/backup//
 set directory=~/.vim/tmp/swap//
 set writebackup
-" ================ Completion =======================
-"
+
+" ----------------------------------------------------------------------------
+"  Completion 
+" ----------------------------------------------------------------------------
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -111,8 +116,9 @@ set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 set wildignorecase              " Ignore case when completing file names and directories.
 
-" ================ Custom Settings =======================
-
+" ----------------------------------------------------------------------------
+"  Custom Settings 
+" ----------------------------------------------------------------------------
 "move by lines on screen, instead of linenumber
 nnoremap j gj
 nnoremap k gk
