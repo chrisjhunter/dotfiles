@@ -43,6 +43,7 @@ call plug#end()
 syntax on                       " Syntax hi-lighting
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
 set syntax=enable
+set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
 set nowrap
 set nofoldenable                " disable folding
@@ -117,6 +118,27 @@ let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 
+"make git diff / log coloring static
+hi diffAdded   ctermfg=green
+hi diffRemoved ctermfg=red
+if &diff
+        highlight DiffAdd term=reverse cterm=bold ctermbg=green ctermfg=black
+        highlight DiffChange term=reverse cterm=bold ctermbg=cyan ctermfg=black
+        highlight DiffText term=reverse cterm=bold ctermbg=red ctermfg=black
+        highlight DiffDelete term=reverse cterm=bold ctermbg=red ctermfg=black
+endif
+
+" Highlight trailing whitespace characters
+:highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+" Show matching brackets.
+set showmatch                   " Highlight matching [{()}]
+hi MatchParen cterm=bold ctermbg=none ctermfg=magenta
+
+" Highlights if your typing past column 80
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn','\%81v',100)
 " ----------------------------------------------------------------------------
 "  Custom Settings 
 " ----------------------------------------------------------------------------
@@ -157,10 +179,6 @@ nnoremap <silent> <leader>= <C-W>=
 " open help window vertically
 autocmd FileType help wincmd L
 
-" Show matching brackets.
-set showmatch                   " Highlight matching [{()}]
-hi MatchParen cterm=bold ctermbg=none ctermfg=magenta
-
 " only for diff mode/vimdiff
 if &diff
   set diffopt=filler,context:1000000 " filler is default and inserts empty lines for sync
@@ -174,9 +192,6 @@ imap <C-@> <Esc>
 "Switch windows
 noremap <C-k> <C-w>k
 noremap <C-j> <C-w>j
-
-" Copies current line and puts a line of '=' below it of equal length
-nnoremap <leader>1 yypVr=
 
 "Switch windows
 nnoremap <C-L> <C-W><C-L>
@@ -192,16 +207,6 @@ nnoremap <D-RIGHT> <C-W>>
 let g:go_fmt_command = "goimports"
 nnoremap <C-G> :! go run %<CR>
 nnoremap <C-F> gg ''
-
-"make git diff / log coloring static
-hi diffAdded   ctermfg=green
-hi diffRemoved ctermfg=red
-if &diff
-        highlight DiffAdd term=reverse cterm=bold ctermbg=green ctermfg=black
-        highlight DiffChange term=reverse cterm=bold ctermbg=cyan ctermfg=black
-        highlight DiffText term=reverse cterm=bold ctermbg=red ctermfg=black
-        highlight DiffDelete term=reverse cterm=bold ctermbg=red ctermfg=black
-endif
 
 "Toggle line nums + relative nums on / off
 nnoremap <silent><leader>n :set nu! rnu! nu? rnu? <cr><cr>
@@ -261,6 +266,76 @@ autocmd! VimEnter * :call LoadSession()
 " Quick select whole file
 map <leader>a ggVG
 
+" Fugitive {
+    nnoremap <silent> <leader>gs :Gstatus<CR>
+    nnoremap <silent> <leader>gd :Gvdiff master<CR>
+    nnoremap <silent> <leader>gc :Gcommit<CR>
+    nnoremap <silent> <leader>gb :Gblame<CR>
+    nnoremap <silent> <leader>gl :Glog<CR>
+    nnoremap <silent> <leader>gp :Git push<CR>
+ "}
+
+" Open go doc in vertical window or horizontal
+au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
+au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
+
+
+"yank until end of line
+" Act like D and C
+nnoremap Y y$
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+"====[ I'm sick of typing :%s/.../.../g ]=======
+nnoremap S :%s//gc<LEFT><LEFT><LEFT>
+
+" Scratch {{{
+
+command! ScratchToggle call ScratchToggle()
+
+function! ScratchToggle()
+    if exists("w:is_scratch_window")
+        unlet w:is_scratch_window
+        exec "q"
+    else
+        exec "normal! :Sscratch\<cr>\<C-W>L"
+        let w:is_scratch_window = 1
+    endif
+endfunction
+
+nnoremap <silent> <leader><tab> :ScratchToggle<cr>
+
+" }}}
+
+" Make those folders automatically if they don't already exist.
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
+
+" Don't move on *
+" I'd use a function for this but Vim clobbers the last search when you're in
+" a function so fuck it, practicality beats purity.
+nnoremap <silent> * :let stay_star_view = winsaveview()<cr>*:call winrestview(stay_star_view)<cr>
+nnoremap <silent> # :let stay_star_view = winsaveview()<cr>#:call winrestview(stay_star_view)<cr>
+
+" F@$% you, help key.
+noremap  <F1> :checktime<cr>
+inoremap <F1> <esc>:checktime<cr>
+
+" File browser style configs
+let g:netrw_liststyle=0         " Thin (change to 3 for tree)
+let g:netrw_banner=0            " No banner
+let g:netrw_altv=1              " Open files on right
+let g:netrw_preview=1           " Open previews vertically
+
 " ----------------------------------------------------------------------------
 " Markdown headings
 " ----------------------------------------------------------------------------
@@ -289,83 +364,6 @@ if has('statusline')
 
     set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]
 endif
-
-" Fugitive {
-    nnoremap <silent> <leader>gs :Gstatus<CR>
-    nnoremap <silent> <leader>gd :Gvdiff master<CR>
-    nnoremap <silent> <leader>gc :Gcommit<CR>
-    nnoremap <silent> <leader>gb :Gblame<CR>
-    nnoremap <silent> <leader>gl :Glog<CR>
-    nnoremap <silent> <leader>gp :Git push<CR>
- "}
-
-" Open go doc in vertical window or horizontal
-au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
-au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
-
-" Highlight trailing whitespace characters
-:highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-
-"yank until end of line
-" Act like D and C
-nnoremap Y y$
-
-" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
-" so that you can undo CTRL-U after inserting a line break.
-inoremap <C-U> <C-G>u<C-U>
-
-" Highlights if your typing past column 80
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn','\%81v',100)
-
-"====[ I'm sick of typing :%s/.../.../g ]=======
-nnoremap S :%s//gc<LEFT><LEFT><LEFT>
-
-" Scratch {{{
-
-command! ScratchToggle call ScratchToggle()
-
-function! ScratchToggle()
-    if exists("w:is_scratch_window")
-        unlet w:is_scratch_window
-        exec "q"
-    else
-        exec "normal! :Sscratch\<cr>\<C-W>L"
-        let w:is_scratch_window = 1
-    endif
-endfunction
-
-nnoremap <silent> <leader><tab> :ScratchToggle<cr>
-
-" }}}
-
-
-" Make those folders automatically if they don't already exist.
-if !isdirectory(expand(&undodir))
-    call mkdir(expand(&undodir), "p")
-endif
-if !isdirectory(expand(&backupdir))
-    call mkdir(expand(&backupdir), "p")
-endif
-if !isdirectory(expand(&directory))
-    call mkdir(expand(&directory), "p")
-endif
-
-" Don't move on *
-" I'd use a function for this but Vim clobbers the last search when you're in
-" a function so fuck it, practicality beats purity.
-nnoremap <silent> * :let stay_star_view = winsaveview()<cr>*:call winrestview(stay_star_view)<cr>
-nnoremap <silent> # :let stay_star_view = winsaveview()<cr>#:call winrestview(stay_star_view)<cr>
-
-" F@$% you, help key.
-noremap  <F1> :checktime<cr>
-inoremap <F1> <esc>:checktime<cr>
-
-let g:netrw_liststyle=0         " Thin (change to 3 for tree)
-let g:netrw_banner=0            " No banner
-let g:netrw_altv=1              " Open files on right
-let g:netrw_preview=1           " Open previews vertically
 
 " ----------------------------------------------------------------------------
 " Below configs are works in progress

@@ -5,6 +5,11 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+if [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ]; then
+    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+fi
+export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+
 export PATH=$PATH:/Users/e135122/go/bin
 
 # MAC terminal colors
@@ -145,6 +150,7 @@ alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
 ################me from random###################
 # User specific aliases and functions
+alias tree="tree -I vendor"
 alias ll="ls -lath --color"
 alias lr="ls -lRath --color"
 alias lss="ls -laSh --color"
