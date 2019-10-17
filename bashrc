@@ -137,6 +137,7 @@ function gofind() {
 
 alias godocweb='godoc -http=:6060' # Spawns a godoc web server
 alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are serving or listening on ports, sorted alphabetically
+alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 
 ################from sclark###################
 export HISTSIZE=10000                              # bash history will save N commands
@@ -151,6 +152,7 @@ alias tulip='netstat -tulpn'
 ################me from random###################
 # User specific aliases and functions
 alias tree="tree -I vendor"
+#alias god="cd /home/chunter/go/src/go.scope.charter.com/ && cd $1"
 alias ll="ls -lath --color"
 alias lr="ls -lRath --color"
 alias lss="ls -laSh --color"
@@ -237,8 +239,8 @@ alias grc="git rebase --continue"
     #alias unfuckgitremote='git branch --set-upstream-to=origin/`git rev-parse --abbrev-ref HEAD` `git rev-parse --abbrev-ref HEAD`'
 
 #####################ZSH like PS1 below#####################
-# moved to ~/.inputrc
-#bind 'set completion-ignore-case on'
+# ignore case tab completion
+bind 'set completion-ignore-case on'
 # Regular Colors
 Black="\[\033[0;30m\]"      # Black
 Grey="\[\033[1;30m\]"       # Grey
@@ -303,7 +305,7 @@ function build_prompt() {
 #stores function calls and executes prior to PS1 being set, allows you to cheat
 #PROMPT_COMMAND=build_prompt
 function test_prompt() {
-    PS1="[\t $(date +%m/%d/%y)] $Cyan\W"
+    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\W"
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
 }

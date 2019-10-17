@@ -8,9 +8,12 @@
 " :b <regex>
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
+" opens files only, ignores directory listings
+" find . -xtype f -exec vim {} +
 " vim ./* ./*/* - open recursively, 1 dir deep
 " C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
+" Count number of matches :%s/pattern//gn
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -18,22 +21,33 @@
 " For Mac/Linux users
 call plug#begin('~/.vim/bundle')
 
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-vinegar'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'fatih/vim-go'
-Plug 'tpope/vim-fugitive'
 Plug 'vim-ruby/vim-ruby'
 Plug 'mileszs/ack.vim'
 Plug 'EinfachToll/DidYouMean'
+Plug 'maralla/completor.vim'
+Plug 'jiangmiao/auto-pairs'
+"Plug 'w0rp/ale'
 Plug 'zhaocai/minibufexpl.vim'
 Plug 'tyru/regbuf.vim'
 Plug 'dahu/vim-lotr'
 Plug 'junegunn/vim-peekaboo'
 Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-vinegar'
 Plug 'vim-scripts/scratch.vim'
 call plug#end()
 
+if has('clipboard')
+  if has('unnamedplus')  " When possible use + register for copy-paste
+    set clipboard=unnamed,unnamedplus
+  else         " On mac and Windows, use * register for copy-paste
+    set clipboard=unnamed
+  endif
+endif
 " ----------------------------------------------------------------------------
 "  Endplug 
 " ----------------------------------------------------------------------------
@@ -90,6 +104,11 @@ set writebackup
 " ----------------------------------------------------------------------------
 "  Completion 
 " ----------------------------------------------------------------------------
+let g:completor_gocode_binary = '/export/home/E135122/go/bin/gocode'
+"let g:go_gocode_unimported_packages = 1
+"let g:ale_open_list = 1
+"let g:ale_lint_on_text_changed = 'never'
+nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -109,7 +128,8 @@ set wildignorecase              " Ignore case when completing file names and dir
 "  Colors 
 " ----------------------------------------------------------------------------
 set background=dark
-colorscheme monokai_curs    "golang cli
+colorscheme monokai_curs
+"colorscheme badwolf
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -364,6 +384,13 @@ if has('statusline')
 
     set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]
 endif
+" provide hjkl movements in Insert mode via the <Alt> modifier key
+" MacOS alternate characters - https://stackoverflow.com/questions/5379837/is-it-possible-to-mapping-alt-hjkl-in-insert-mode
+" https://stackoverflow.com/questions/7501092/can-i-map-alt-key-in-vim
+imap ˙ <Left>
+imap ∆ <Down>
+imap ˚ <Up>
+imap ¬ <Right>
 
 " ----------------------------------------------------------------------------
 " Below configs are works in progress
