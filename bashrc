@@ -152,7 +152,6 @@ alias tulip='netstat -tulpn'
 ################me from random###################
 # User specific aliases and functions
 alias tree="tree -I vendor"
-#alias god="cd /home/chunter/go/src/go.scope.charter.com/ && cd $1"
 alias ll="ls -lath --color"
 alias lr="ls -lRath --color"
 alias lss="ls -laSh --color"

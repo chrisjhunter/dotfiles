@@ -21,24 +21,24 @@
 " For Mac/Linux users
 call plug#begin('~/.vim/bundle')
 
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-vinegar'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'fatih/vim-go'
-Plug 'vim-ruby/vim-ruby'
-Plug 'mileszs/ack.vim'
-Plug 'EinfachToll/DidYouMean'
+Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
+Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
+Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
+Plug 'fatih/vim-go'             "default vim-go plugin
+Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
+Plug 'mileszs/ack.vim'          "vim grep replacement
+Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
 Plug 'maralla/completor.vim'
 Plug 'jiangmiao/auto-pairs'
 "Plug 'w0rp/ale'
-Plug 'zhaocai/minibufexpl.vim'
-Plug 'tyru/regbuf.vim'
-Plug 'dahu/vim-lotr'
-Plug 'junegunn/vim-peekaboo'
-Plug 'airblade/vim-gitgutter'
-Plug 'vim-scripts/scratch.vim'
+Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
+Plug 'tyru/regbuf.vim'          "gives you list of registers
+Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
+Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <CTRL-R> in insert mode so you can see the contents of the registers
+Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
+Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
 call plug#end()
 
 if has('clipboard')
