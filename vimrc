@@ -6,6 +6,7 @@
 ":! go run % -d=debug
 " :find <regex>
 " :b <regex>
+" :%s/\s\+$//e trim whitepsace
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
 " opens files only, ignores directory listings
@@ -20,7 +21,6 @@
 " ----------------------------------------------------------------------------
 " For Mac/Linux users
 call plug#begin('~/.vim/bundle')
-
 Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
@@ -32,13 +32,17 @@ Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
 Plug 'maralla/completor.vim'
 Plug 'jiangmiao/auto-pairs'
-"Plug 'w0rp/ale'
 Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
 Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
 Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <CTRL-R> in insert mode so you can see the contents of the registers
 Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
 Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
+"Plug 'Valloric/YouCompleteMe'
+Plug 'w0rp/ale'
+Plug 'ervandew/supertab'
+Plug 'plasticboy/vim-markdown'
+Plug 'wlangstroth/vim-racket'
 call plug#end()
 
 if has('clipboard')
@@ -48,6 +52,23 @@ if has('clipboard')
     set clipboard=unnamed
   endif
 endif
+"gocode
+let g:go_gocode_unimported_packages = 1
+"let g:completor_python_binary = '/usr/bin/python'
+"let g:asyncomplete_auto_popup = 0
+"=======================jose de la o=======================
+let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+let g:SuperTabClosePreviewOnPopupClose = 1
+"
+" Write this in your vimrc file
+"let g:ale_lint_on_text_changed = 'never'
+let g:ale_open_list = 1
+nnoremap <F7> :ALEToggle<cr>
+
+" Write this in your vimrc file
+"let g:ale_set_loclist = 0
+"let g:ale_set_quickfix = 1
+
 " ----------------------------------------------------------------------------
 "  Endplug 
 " ----------------------------------------------------------------------------
@@ -56,6 +77,7 @@ endif
 " ----------------------------------------------------------------------------
 syntax on                       " Syntax hi-lighting
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
+"set omnifunc=syntaxcomplete#Complete
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
@@ -128,8 +150,10 @@ set wildignorecase              " Ignore case when completing file names and dir
 "  Colors 
 " ----------------------------------------------------------------------------
 set background=dark
-colorscheme monokai_curs
-"colorscheme badwolf
+"colorscheme badwolf    "golang cli
+"colorscheme ir_dark_gray    "golang cli
+"colorscheme ir_black    "golang cli
+colorscheme monokai_curs    "golang cli
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -163,10 +187,12 @@ call matchadd('ColorColumn','\%81v',100)
 "  Custom Settings 
 " ----------------------------------------------------------------------------
 "move by lines on screen, instead of linenumber
-nnoremap j gj
-nnoremap k gk
+"nnoremap j gj
+"nnoremap k gk
 nnoremap <up> gk
 nnoremap <down> gj
+nnoremap j gjzz
+nnoremap k gkzz
 
 " view buffer list
 nnoremap <leader>b :buffers <cr>

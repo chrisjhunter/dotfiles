@@ -11,6 +11,7 @@ fi
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 
 export PATH=$PATH:/Users/e135122/go/bin
+export PATH=$PATH:/Applications/Racket\ v7.3/bin/
 
 # MAC terminal colors
 export CLICOLOR=1
@@ -152,6 +153,7 @@ alias tulip='netstat -tulpn'
 ################me from random###################
 # User specific aliases and functions
 alias tree="tree -I vendor"
+alias ls="ls -G"
 alias ll="ls -lath --color"
 alias lr="ls -lRath --color"
 alias lss="ls -laSh --color"
@@ -295,16 +297,21 @@ function parse_git_status() {
     fi
 }
 
+#Linux posix normal build
 function build_prompt() {
-    PS1="$Grey\t $(date +%m/%d/%y)$White $dGreen\u$White@$dGreen\h$White $Cyan\$(dirs)"
+    #PS1="$Grey\t $(date +%m/%d/%y)$White $dGreen\u$White@$dGreen\h$White $Cyan\$(dirs)"
+    PS1="[$(date +"%H:%M:%S %m/%e/%G")] $Cyan\W"
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
     #PS1+=" ($(parse_git_branch) @ $(git describe --tag 2>/dev/null))$White [\j]$ "
 }
 #stores function calls and executes prior to PS1 being set, allows you to cheat
 #PROMPT_COMMAND=build_prompt
+
+#MACOS prompt
 function test_prompt() {
-    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\W"
+    #PS1="\t \D{%D} $Cyan\$(dirs)"
+    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\$(dirs)"
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
 }
@@ -316,3 +323,5 @@ source /opt/rh/devtoolset-6/enable
 
 #skip, cgo pointer to cgo pointer warnings for slice's
 export GODEBUG=cgocheck=0
+
+#ssh-add -K <path_to_private_key>
