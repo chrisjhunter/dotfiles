@@ -118,6 +118,7 @@ set undofile
 set undodir=~/.vim/tmp/undo//
 set noswapfile                  " Don't use swapfile
 
+
 " "Prefer to use undo files atm 5/2017 ... might turn it back on
 set backup
 set backupdir=~/.vim/tmp/backup//
@@ -146,6 +147,7 @@ set wildignore+=migrations                       " Django migrations
 set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 set wildignorecase              " Ignore case when completing file names and directories.
+
 
 " ----------------------------------------------------------------------------
 "  Colors 
