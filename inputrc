@@ -1,0 +1,4 @@
+# ignore case tab completion
+set completion-ignore-case on
+
+#bind Space:magic-space
