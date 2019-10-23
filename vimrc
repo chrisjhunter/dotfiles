@@ -1,5 +1,6 @@
 "Vimrc
 
+
 " ----------------------------------------------------------------------------
 " Don't want to forget these
 " ----------------------------------------------------------------------------
@@ -203,6 +204,7 @@ nnoremap <leader>x :Sex<CR>
 
 " Open directory of current file
 nnoremap <leader>f :w!<cr>:e %:h<cr>
+
 " Spell check
 nnoremap <leader><F7> :set spell!<cr>
 " Force quit
@@ -308,6 +310,7 @@ endfunction
 autocmd! VimLeave * mksession! .session.vim
 autocmd! VimEnter * :call LoadSession()
 
+
 "set cursorline  " have a line indicate cursor location
 " Quick select whole file
 map <leader>a ggVG
@@ -354,6 +357,7 @@ endfunction
 nnoremap <silent> <leader><tab> :ScratchToggle<cr>
 
 " }}}
+
 
 " Make those folders automatically if they don't already exist.
 if !isdirectory(expand(&undodir))
