@@ -1,5 +1,6 @@
 hardstatus alwayslastline
-hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{=kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B}%Y-%m-%d %{W}%c%{g}]'
+hardstatus string '%{= kW} %{=kw}%?%-Lw%?%{r}[%{W}%n*%f%t%?[%u]%?%{r}]%{w}%?%+Lw%?%?%= %{y} %{Y}%H %{g}  %{W}%m/%d/%Y %c%{g}'
+bind r eval "source $HOME/.screenrc" "echo '.screenrc reloaded!'"
 term="screen-256color"
 screen -t vim-go 0 bash
 screen -t cli 1 bash
