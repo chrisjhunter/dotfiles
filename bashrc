@@ -90,6 +90,22 @@ function extract () {
     fi
 }
 
+# create daily scratch notes
+function note ()
+{
+  dyna_year=$(date +%Y);
+  dyna_month=$(date +%m);
+  dyna_day=$(date +%d);
+  dyna_dir=~/Documents/Notes/$dyna_year/$dyna_month;
+  dyna_file=$dyna_day.md;
+  if [ ! -d $my_dir ]; then
+      mkdir -p $dyna_dir;
+      #find ~/logs/ -type d -mtime +15 -exec rm -rf {} \;
+      find ~/Documents/Notes/ -type f ! -name "*.gz" -mtime +1 -exec gzip -9q {} \;
+  fi
+  vim $dyna_dir/$dyna_file;
+}
+
 #auto logging
 function tel ()
 {
@@ -156,7 +172,9 @@ alias ls="ls -G"
 alias ll="ls -lath --color"
 alias lr="ls -lRath --color"
 alias lss="ls -laSh --color"
-alias cp="cp -v"
+
+# -v verbose -i request confirmation before overwrite
+alias cp="cp -vi"
 alias mv="mv -v"
 alias rm="rm -vi"
 alias rmf="rm -v"
@@ -241,6 +259,7 @@ alias grc="git rebase --continue"
 #####################ZSH like PS1 below#####################
 # ignore case tab completion
 bind 'set completion-ignore-case on'
+
 # Regular Colors
 Black="\[\033[0;30m\]"      # Black
 Grey="\[\033[1;30m\]"       # Grey
