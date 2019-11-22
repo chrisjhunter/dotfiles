@@ -16,6 +16,8 @@
 " C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
 " Count number of matches :%s/pattern//gn
+" Command foward slash(/) - find the cursor in iterm
+" :help i_^n or :helpgrep
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -26,7 +28,7 @@ Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
-Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
+"Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
 Plug 'fatih/vim-go'             "default vim-go plugin
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
@@ -63,7 +65,7 @@ let g:SuperTabClosePreviewOnPopupClose = 1
 "
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
-let g:ale_open_list = 1
+"let g:ale_open_list = 1
 nnoremap <F7> :ALEToggle<cr>
 
 " Write this in your vimrc file
@@ -83,6 +85,8 @@ set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
 set nowrap
+set bs=indent,eol,start     " Backspace over everything in insert mode
+set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
 set nofoldenable                " disable folding
 set modifiable                  " make a buffer modifiable
 set incsearch                   " Lookahead as search pattern is specified
@@ -111,7 +115,7 @@ set shiftwidth=4                " Control how many columns text is indented with
 set diffopt+=vertical           "open diffs vertically by default
 
 " small indicators for long lines cut off by screen / window size
-set listchars=extends:>,precedes:<
+"set listchars=extends:>,precedes:<
 
 " Persistent undo
 set undofile
@@ -184,6 +188,7 @@ hi MatchParen cterm=bold ctermbg=none ctermfg=magenta
 " Highlights if your typing past column 80
 highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn','\%81v',100)
+
 " ----------------------------------------------------------------------------
 "  Custom Settings 
 " ----------------------------------------------------------------------------
@@ -205,16 +210,28 @@ nnoremap <leader>x :Sex<CR>
 " Open directory of current file
 nnoremap <leader>f :w!<cr>:e %:h<cr>
 
+" Insert timestamp
+nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
+
+" Insert timestamp
+nnoremap <F5> :read!date<cr>kddA - 
+"nnoremap <F5> :pu=strftime('%c')<cr>kddA - 
+
 " Spell check
 nnoremap <leader><F7> :set spell!<cr>
+
 " Force quit
 nnoremap <leader>q :q!<cr>
+
 " Write file
 nnoremap <leader>w :w<cr>
+
 " Write + quit
 nnoremap <leader>z :wq!<cr>
 
+" Remap pop
 nnoremap g[ :pop<cr>
+
 "Equalize height and width of all windows
 nnoremap <silent> <leader>= <C-W>=
 "Ctrl+W +/-: increase/decrease height (ex. 20<C-w>+)
@@ -421,6 +438,16 @@ imap ˙ <Left>
 imap ∆ <Down>
 imap ˚ <Up>
 imap ¬ <Right>
+
+" Pandoc and Notes {{{2
+command! -nargs=1 Ngrep lvimgrep "<args>" $NOTES_DIR/**/*.txt
+"nnoremap <leader>[ :Ngrep
+nnoremap <C-n> :cnext<cr>z.
+nnoremap <C-p> :cprev<cr>z.
+hi! link QuickFixLine Search
+" Steve Losh
+noremap H ^
+noremap L g_
 
 " ----------------------------------------------------------------------------
 " Below configs are works in progress
