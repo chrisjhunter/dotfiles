@@ -84,7 +84,10 @@ filetype plugin indent on       " Turn on filetype detection, plugin and indent.
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
-set nowrap
+"set nowrap
+set wrap 
+set linebreak 
+set nolist
 set bs=indent,eol,start     " Backspace over everything in insert mode
 set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
 set nofoldenable                " disable folding
@@ -251,8 +254,11 @@ endif
 
 "http://vim.wikia.com/wiki/Avoid_the_escape_key
 "exit insert using C-space
-nnoremap <C-@> a
-imap <C-@> <Esc>
+"nnoremap <C-@> a
+"imap <C-@> <Esc>
+"https://vim.fandom.com/wiki/Best_Vim_Tips
+"Basic use
+"<Esc> is the escape key or use <ctrl>[  sometimes written as  <C-[>
 
 "Switch windows
 noremap <C-k> <C-w>k

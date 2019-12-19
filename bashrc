@@ -98,10 +98,10 @@ function note ()
   dyna_day=$(date +%d);
   dyna_dir=~/Documents/Notes/$dyna_year/$dyna_month;
   dyna_file=$dyna_day.md;
-  if [ ! -d $my_dir ]; then
+  if [ ! -d $dyna_dir ]; then
       mkdir -p $dyna_dir;
       #find ~/logs/ -type d -mtime +15 -exec rm -rf {} \;
-      find ~/Documents/Notes/ -type f ! -name "*.gz" -mtime +1 -exec gzip -9q {} \;
+      find ~/Documents/Notes/$dyna_year -type f ! -name "*.gz" -mtime +1 -exec gzip -9q {} \;
   fi
   vim $dyna_dir/$dyna_file;
 }
@@ -279,7 +279,8 @@ Brown="\[\033[1;33m\]"      # Brown
 
 function parse_git_branch() {
     tags=$(git describe --tag 2>/dev/null)
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
+    #git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
+    #git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
 }
 function orig_parse_git_status() {
     #if_we_are_in_git_work_tree
