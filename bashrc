@@ -8,6 +8,7 @@ fi
 if [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ]; then
     ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
 fi
+
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 
 export PATH=$PATH:/Applications/Racket\ v7.3/bin/
@@ -15,10 +16,42 @@ export PATH=$PATH:/Applications/Racket\ v7.3/bin/
 # MAC terminal colors
 export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxegedabagacad
-###############Sensible bash################
+
+#helps screen inherit, works on modern terms
+export TERM=xterm-256color
+#export TERM=screen-256color
+
+export HISTSIZE=10000                              # bash history will save N commands
+export HISTFILESIZE=${HISTSIZE}                    # bash will remember N commands
+export HISTCONTROL=ignoreboth                      # ingore duplicates and spaces (ignoreboth, ignoredups, ignorespace)
+HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -lath'
+#HISTIGNORE=${HISTIGNORE}':%1:%2:shutdown*'         #dunno
+export HISTIGNORE
+
+#golang 1.8 requires devtools-6
+source /opt/rh/devtoolset-6/enable
+
+#skip, cgo pointer to cgo pointer warnings for slice's
+export GODEBUG=cgocheck=0
+
+#ssh-add -K <path_to_private_key>
+# or put in .bash_profile, to keep private
+
 # Prevent file overwrite on stdout redirection
 # Use `>|` to force redirection to an existing file
 set -o noclobber
+
+# bash cli behaves like vi
+#set -o vi
+
+    #set -x     Print command traces before executing command.
+    #set -o
+    #set -v     Prints shell input lines as they are read.
+    #http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html
+    #https://www.gnu.org/software/bash/manual/bashref.html#The-Set-Builtin
+
+# ignore case tab completion
+bind 'set completion-ignore-case on'
 
 # Enable history expansion with space
 # E.g. typing !!<space> will replace the !! with your last command
@@ -44,12 +77,7 @@ shopt -s cmdhist
 # %T equivalent to %H:%M:%S (24-hours format)
 HISTTIMEFORMAT='%F %T '
 ################me from random##########################
-# bash cli behaves like vi
-#set -o vi
 
-#helps screen inherit, works on modern terms
-export TERM=xterm-256color
-#export TERM=screen-256color
 
 #alias f="find . \"*$1*\""
 function f() {
@@ -62,11 +90,6 @@ function ago() {
     #vim $(find . -maxdepth 3 -iname "*.go")
     #vim `find . -maxdepth 2 -iname "*.go"`
 
-    #set -x     Print command traces before executing command.
-    #set -o
-    #set -v     Prints shell input lines as they are read.
-    #http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_02_03.html
-    #https://www.gnu.org/software/bash/manual/bashref.html#The-Set-Builtin
 }
 
 # use extract instead of tar/rar/gunzip
@@ -155,13 +178,6 @@ alias godocweb='godoc -http=:6060' # Spawns a godoc web server
 alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are serving or listening on ports, sorted alphabetically
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 
-################from sclark###################
-export HISTSIZE=10000                              # bash history will save N commands
-export HISTFILESIZE=${HISTSIZE}                    # bash will remember N commands
-export HISTCONTROL=ignoreboth                      # ingore duplicates and spaces (ignoreboth, ignoredups, ignorespace)
-HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -lath'
-#HISTIGNORE=${HISTIGNORE}':%1:%2:shutdown*'         #dunno
-export HISTIGNORE
 
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
@@ -169,9 +185,9 @@ alias tulip='netstat -tulpn'
 # User specific aliases and functions
 alias tree="tree -I vendor"
 alias ls="ls -G"
-alias ll="ls -lath --color"
-alias lr="ls -lRath --color"
-alias lss="ls -laSh --color"
+#alias ll="ls -lath --color"
+#alias lr="ls -lRath --color"
+#alias lss="ls -laSh --color"
 
 # -v verbose -i request confirmation before overwrite
 alias cp="cp -vi"
@@ -257,8 +273,6 @@ alias grc="git rebase --continue"
     #alias unfuckgitremote='git branch --set-upstream-to=origin/`git rev-parse --abbrev-ref HEAD` `git rev-parse --abbrev-ref HEAD`'
 
 #####################ZSH like PS1 below#####################
-# ignore case tab completion
-bind 'set completion-ignore-case on'
 
 # Regular Colors
 Black="\[\033[0;30m\]"      # Black
@@ -279,8 +293,7 @@ Brown="\[\033[1;33m\]"      # Brown
 
 function parse_git_branch() {
     tags=$(git describe --tag 2>/dev/null)
-    #git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
-    #git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1 @ ${tags})/"
 }
 function orig_parse_git_status() {
     #if_we_are_in_git_work_tree
@@ -337,10 +350,4 @@ function test_prompt() {
 PROMPT_COMMAND=test_prompt
 ###################End zsh-like prompt settings ###################################
 
-#golang 1.8 requires devtools-6
-source /opt/rh/devtoolset-6/enable
 
-#skip, cgo pointer to cgo pointer warnings for slice's
-export GODEBUG=cgocheck=0
-
-#ssh-add -K <path_to_private_key>
