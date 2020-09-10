@@ -5,12 +5,41 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# Fixing agent forwarding with screen
+# https://gist.github.com/martijnvermaat/8070533
+# https://developer.github.com/v3/guides/using-ssh-agent-forwarding/
 if [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ]; then
     ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
 fi
 
+# Detect the platform (similar to $OSTYPE)
+OS="`uname`"
+case $OS in
+  'Linux')
+    OS='Linux'
+    alias ls='ls --color=auto'
+    ;;
+  'FreeBSD')
+    OS='FreeBSD'
+    alias ls='ls -G'
+    ;;
+  'WindowsNT')
+    OS='Windows'
+    ;;
+  'Darwin')
+    OS='Mac'
+    alias ls='ls -G'
+    ;;
+  'SunOS')
+    OS='Solaris'
+    ;;
+  'AIX') ;;
+  *) ;;
+esac
+
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 
+# SICP Racket path
 export PATH=$PATH:/Applications/Racket\ v7.3/bin/
 
 # MAC terminal colors
@@ -21,6 +50,10 @@ export LSCOLORS=gxfxcxdxbxegedabagacad
 export TERM=xterm-256color
 #export TERM=screen-256color
 
+# Use standard ISO 8601 timestamp
+# %F equivalent to %Y-%m-%d
+# %T equivalent to %H:%M:%S (24-hours format)
+HISTTIMEFORMAT='%F %T '
 export HISTSIZE=10000                              # bash history will save N commands
 export HISTFILESIZE=${HISTSIZE}                    # bash will remember N commands
 export HISTCONTROL=ignoreboth                      # ingore duplicates and spaces (ignoreboth, ignoredups, ignorespace)
@@ -72,18 +105,15 @@ shopt -s histappend
 # Save multi-line commands as one command
 shopt -s cmdhist
 
-# Use standard ISO 8601 timestamp
-# %F equivalent to %Y-%m-%d
-# %T equivalent to %H:%M:%S (24-hours format)
-HISTTIMEFORMAT='%F %T '
-################me from random##########################
-
+################FUNCTIONS##########################
 
 #alias f="find . \"*$1*\""
+# fuzzy find filenames
 function f() {
     find . -iname "*$1*"
 }
 
+# open all golang files in subdirectories
 function ago() {
     #find . -maxdepth 2 -iname "*.go" -exec vi {} \; 2>/dev/null
     vim $(find . -not \( -path ./vendor -prune \) -iname "*.go")
@@ -129,7 +159,7 @@ function note ()
   vim $dyna_dir/$dyna_file;
 }
 
-#auto logging
+#auto logging telnet
 function tel ()
 {
   my_date=$(date -u +%Y-%m-%d);
@@ -144,6 +174,7 @@ function tel ()
   telnet $1 | tee $my_dir/$my_file;
 }
 
+#auto logging ssh
 function s ()
 {
   my_date=$(date -u +%Y-%m-%d);
@@ -157,7 +188,8 @@ function s ()
   fi
   ssh $1 | tee $my_dir/$my_file;
 }
-################from sleuth###################
+
+#git push, create feature branch if doesn't exists
 function gp() {
     BRANCH=$(git symbolic-ref --short HEAD)
     REMOTE=$(git status -sb | grep '...origin')
@@ -169,32 +201,31 @@ function gp() {
     fi
 }
 
+#find filename, then grep for regex
 function gofind() {
     grep $2 $(find . -type f -name \*$1)
 }
 
 
+################sysadmin like aliases###################
 alias godocweb='godoc -http=:6060' # Spawns a godoc web server
 alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are serving or listening on ports, sorted alphabetically
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
-
-
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
-################me from random###################
-# User specific aliases and functions
 alias tree="tree -I vendor"
-alias ls="ls -G"
-#alias ll="ls -lath --color"
-#alias lr="ls -lRath --color"
-#alias lss="ls -laSh --color"
-
-# -v verbose -i request confirmation before overwrite
-alias cp="cp -vi"
+#set for macbook
+# added case above
+#alias ls="ls -G"
+alias ll="ls -lath"
+alias lr="ls -lRath"
+alias lss="ls -laSh"
+alias cp="cp -vi"                       # -v verbose -i request confirmation before overwrite
 alias mv="mv -v"
 alias rm="rm -vi"
 alias rmf="rm -v"
 alias mkdir='mkdir -pv'                  # -p creates parent directories as needed, -v ouputs to console when it does
+alias grep='grep --color'                  # always color
 alias ..='cd ../'                           # Go back 1 directory level
 alias ...='cd ../../'                       # Go back 2 directory levels
 alias ..3='cd ../../../'                     # Go back 3 directory levels
@@ -202,25 +233,22 @@ alias ..4='cd ../../../../'                  # Go back 4 directory levels
 alias ..5='cd ../../../../../'               # Go back 5 directory levels
 alias ..6='cd ../../../../../../'            # Go back 6 directory levels
 alias hs="history | grep"
-#alias grep="grep --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net} --exclude=.session.vim"
-#alias grep="grep --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
-alias grin="grep -rn --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
-alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
-alias gsc="sub-status"
-#alias ago="vim **/*.go"
 alias lb="ls -lath ~/.vim/bundle/"
 alias vb="vim ~/.bashrc"
 alias vv="vim ~/.vimrc"
 alias vs="vim ~/.ssh/config"
-########################https://csswizardry.com/2017/05/little-things-i-like-to-do-with-git/
-####################### hackernews
-##### useful
+
+
+####################### git aliases ###################
+alias grin="grep -rn --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
+alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
+alias gsc="sub-status"
 alias gs="git status"
 alias gd='git diff --stat -w'      # Shows file changes
 alias gb='git branch'
 alias gda="git diff"
 alias gac="git commit -am "
-alias gl='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit |head -20'
+alias gl='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'
 alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit'
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit'
 alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph"
@@ -229,48 +257,7 @@ alias mast='git checkout master'           # Checkout master branch
 alias gbv='git branch -vvr'           # Checkout master branch
 alias gcomp="diff -y <(git log --oneline ) <(git log --oneline master) |head -20"
 alias gcompa="diff -y <(git log --oneline ) <(git log --oneline master)"
-#alias gl="git log"
-#alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-#alias gla='git log --all --graph --pretty=format:"%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-#alias gp="git push"
-#alias gA="git add -A"
-#alias gC="git checkout"
 
-###### unused
-alias gca='git commit --amend'     # Amends the most recent commit
-alias gc="git commit"
-alias gcm="git commit -m"
-#alias gb="git blame"
-alias ga="git add"
-alias gm="git merge"
-alias gmc="git merge --continue"
-alias gpu="git pull"
-alias grc="git rebase --continue"
-
-#####################more hackernews#####################
-    #alias g='git status -sb'
-    #alias ga='git add'
-    #alias gac='git commit --amend'
-    #alias gbb='git checkout -b'
-    #alias gbm='git branch --merged'
-    #alias gbn='git branch --no-merged'
-    #alias gc='git commit -m'
-    #alias gcp='git cherry-pick'
-    #alias gco='git checkout'
-    #alias gd='git diff'
-    #alias gdc='git diff --cached'
-    #alias gg='git status'
-    #alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-    #alias gla='git log --all --graph --pretty=format:"%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-    #alias ggpublish='git push && git push --tags && npm publish'
-    #alias gp='git pull --rebase && git push'
-    #alias gpp='git push && git push --tags'
-    #alias gpl='git pull --rebase --prune'
-    #alias gpt='git pull --rebase && git push --tags'
-    #alias grb='git rebase'
-    #alias grc='git rebase --continue'
-    #alias gsp='git stash ; gp ; git stash pop'
-    #alias unfuckgitremote='git branch --set-upstream-to=origin/`git rev-parse --abbrev-ref HEAD` `git rev-parse --abbrev-ref HEAD`'
 
 #####################ZSH like PS1 below#####################
 
@@ -349,5 +336,3 @@ function test_prompt() {
 }
 PROMPT_COMMAND=test_prompt
 ###################End zsh-like prompt settings ###################################
-
-
