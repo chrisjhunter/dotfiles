@@ -196,12 +196,13 @@ call matchadd('ColorColumn','\%81v',100)
 "  Custom Settings 
 " ----------------------------------------------------------------------------
 "move by lines on screen, instead of linenumber
-"nnoremap j gj
-"nnoremap k gk
+nnoremap j gj
+nnoremap k gk
 nnoremap <up> gk
 nnoremap <down> gj
-nnoremap j gjzz
-nnoremap k gkzz
+"recenter screen on cursor when changing lines
+"nnoremap j gjzz
+"nnoremap k gkzz
 
 " view buffer list
 nnoremap <leader>b :buffers <cr>

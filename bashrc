@@ -217,9 +217,9 @@ alias tree="tree -I vendor"
 #set for macbook
 # added case above
 #alias ls="ls -G"
-alias ll="ls -lath"
-alias lr="ls -lRath"
-alias lss="ls -laSh"
+alias ll="ls -lath"                     # long, all, human readable, sort by time
+alias lr="ls -lRath"                    # long, all, human readable, sort by time, recursive
+alias lss="ls -laSh"                    # long, all, human readable, sort by size
 alias cp="cp -vi"                       # -v verbose -i request confirmation before overwrite
 alias mv="mv -v"
 alias rm="rm -vi"
