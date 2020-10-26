@@ -18,6 +18,7 @@
 " Count number of matches :%s/pattern//gn
 " Command foward slash(/) - find the cursor in iterm
 " :help i_^n or :helpgrep
+" diffthis diffoff to compare 2x open buffer files
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -29,7 +30,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
 "Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
-Plug 'fatih/vim-go'             "default vim-go plugin
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
@@ -214,6 +215,7 @@ nnoremap <leader>x :Sex<CR>
 " Open directory of current file
 nnoremap <leader>f :w!<cr>:e %:h<cr>
 
+" Karabiner-Eleements, use Fkeys as standard function keys
 " Insert timestamp
 nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
 
