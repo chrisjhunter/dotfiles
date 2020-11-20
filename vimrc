@@ -63,11 +63,15 @@ let g:go_gocode_unimported_packages = 1
 "=======================jose de la o=======================
 let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 let g:SuperTabClosePreviewOnPopupClose = 1
-"
+
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_open_list = 1
 nnoremap <F7> :ALEToggle<cr>
+nnoremap ]a :ALENextWrap<CR>
+nnoremap [a :ALEPreviousWrap<CR>
+nnoremap ]A :ALELast<CR>
+nnoremap [A :ALEFirst<CR>
 
 " Write this in your vimrc file
 "let g:ale_set_loclist = 0
@@ -137,9 +141,6 @@ set writebackup
 " ----------------------------------------------------------------------------
 let g:completor_gocode_binary = '~/go/bin/gocode'
 "let g:go_gocode_unimported_packages = 1
-"let g:ale_open_list = 1
-"let g:ale_lint_on_text_changed = 'never'
-nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
