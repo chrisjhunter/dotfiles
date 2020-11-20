@@ -18,6 +18,7 @@
 " Count number of matches :%s/pattern//gn
 " Command foward slash(/) - find the cursor in iterm
 " :help i_^n or :helpgrep
+" diffthis diffoff to compare 2x open buffer files
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -29,7 +30,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
 "Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
-Plug 'fatih/vim-go'             "default vim-go plugin
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
@@ -62,11 +63,15 @@ let g:go_gocode_unimported_packages = 1
 "=======================jose de la o=======================
 let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 let g:SuperTabClosePreviewOnPopupClose = 1
-"
+
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_open_list = 1
 nnoremap <F7> :ALEToggle<cr>
+nnoremap ]a :ALENextWrap<CR>
+nnoremap [a :ALEPreviousWrap<CR>
+nnoremap ]A :ALELast<CR>
+nnoremap [A :ALEFirst<CR>
 
 " Write this in your vimrc file
 "let g:ale_set_loclist = 0
@@ -136,9 +141,6 @@ set writebackup
 " ----------------------------------------------------------------------------
 let g:completor_gocode_binary = '~/go/bin/gocode'
 "let g:go_gocode_unimported_packages = 1
-"let g:ale_open_list = 1
-"let g:ale_lint_on_text_changed = 'never'
-nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -214,6 +216,7 @@ nnoremap <leader>x :Sex<CR>
 " Open directory of current file
 nnoremap <leader>f :w!<cr>:e %:h<cr>
 
+" Karabiner-Eleements, use Fkeys as standard function keys
 " Insert timestamp
 nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
 
