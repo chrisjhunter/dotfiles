@@ -19,6 +19,8 @@
 " Command foward slash(/) - find the cursor in iterm
 " :help i_^n or :helpgrep
 " diffthis diffoff to compare 2x open buffer files
+" Gvdiff <branch>:<file> to view changes between files / names / removed stuff
+" Gvdiff hash^ to view a before after change
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -34,7 +36,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, 
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
-Plug 'maralla/completor.vim'
+"Plug 'maralla/completor.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
@@ -61,8 +63,11 @@ let g:go_gocode_unimported_packages = 1
 "let g:completor_python_binary = '/usr/bin/python'
 "let g:asyncomplete_auto_popup = 0
 "=======================jose de la o=======================
-let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+"let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+let g:SuperTabContextDefaultCompletionType = "<c-n>"
+"let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:SuperTabClosePreviewOnPopupClose = 1
+set omnifunc=syntaxcomplete#Complete
 
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
@@ -85,7 +90,6 @@ nnoremap [A :ALEFirst<CR>
 " ----------------------------------------------------------------------------
 syntax on                       " Syntax hi-lighting
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
-"set omnifunc=syntaxcomplete#Complete
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
@@ -139,8 +143,11 @@ set writebackup
 " ----------------------------------------------------------------------------
 "  Completion 
 " ----------------------------------------------------------------------------
-let g:completor_gocode_binary = '~/go/bin/gocode'
+"let g:completor_gocode_binary = '~/go/bin/gocode'
 "let g:go_gocode_unimported_packages = 1
+"let g:ale_open_list = 1
+"let g:ale_lint_on_text_changed = 'never'
+"nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -163,7 +170,8 @@ set background=dark
 "colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
-colorscheme monokai_curs    "golang cli
+"colorscheme monokai_curs    "golang cli
+colorscheme Tomorrow-Night-Bright
 
 " Highlight
 let g:go_highlight_functions = 1

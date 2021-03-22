@@ -248,7 +248,9 @@ alias gd='git diff --stat -w'      # Shows file changes
 alias gb='git branch'
 alias gda="git diff"
 alias gac="git commit -am "
-alias gl='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'
+alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'
+alias gl='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'
+alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'
 alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit'
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit'
 alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph"
