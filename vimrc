@@ -19,6 +19,8 @@
 " Command foward slash(/) - find the cursor in iterm
 " :help i_^n or :helpgrep
 " diffthis diffoff to compare 2x open buffer files
+" Gvdiff <branch>:<file> to view changes between files / names / removed stuff
+" Gvdiff hash^ to view a before after change
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -29,13 +31,14 @@ Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
+Plug 'tpope/vim-eunuch'         "UNIX shell commands
 "Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
-Plug 'maralla/completor.vim'
-Plug 'jiangmiao/auto-pairs'
+"Plug 'maralla/completor.vim'
+"Plug 'jiangmiao/auto-pairs'
 Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
 Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
@@ -61,8 +64,11 @@ let g:go_gocode_unimported_packages = 1
 "let g:completor_python_binary = '/usr/bin/python'
 "let g:asyncomplete_auto_popup = 0
 "=======================jose de la o=======================
-let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+"let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+let g:SuperTabContextDefaultCompletionType = "<c-n>"
+"let g:SuperTabDefaultCompletionType = "<c-n>"
 let g:SuperTabClosePreviewOnPopupClose = 1
+set omnifunc=syntaxcomplete#Complete
 
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
@@ -85,7 +91,6 @@ nnoremap [A :ALEFirst<CR>
 " ----------------------------------------------------------------------------
 syntax on                       " Syntax hi-lighting
 filetype plugin indent on       " Turn on filetype detection, plugin and indent.vim's into runtimepath
-"set omnifunc=syntaxcomplete#Complete
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
@@ -139,8 +144,11 @@ set writebackup
 " ----------------------------------------------------------------------------
 "  Completion 
 " ----------------------------------------------------------------------------
-let g:completor_gocode_binary = '~/go/bin/gocode'
+"let g:completor_gocode_binary = '~/go/bin/gocode'
 "let g:go_gocode_unimported_packages = 1
+"let g:ale_open_list = 1
+"let g:ale_lint_on_text_changed = 'never'
+"nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -163,7 +171,8 @@ set background=dark
 "colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
-colorscheme monokai_curs    "golang cli
+"colorscheme monokai_curs    "golang cli
+colorscheme Tomorrow-Night-Bright
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -399,7 +408,7 @@ endif
 
 " Don't move on *
 " I'd use a function for this but Vim clobbers the last search when you're in
-" a function so fuck it, practicality beats purity.
+" a function so screw it, practicality beats purity.
 nnoremap <silent> * :let stay_star_view = winsaveview()<cr>*:call winrestview(stay_star_view)<cr>
 nnoremap <silent> # :let stay_star_view = winsaveview()<cr>#:call winrestview(stay_star_view)<cr>
 
