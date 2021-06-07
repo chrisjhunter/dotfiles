@@ -38,6 +38,17 @@ case $OS in
 esac
 
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+export TASKDDATA=/var/lib/taskd
+export EDITOR=vim
+alias in="task add +inbox"
+alias calc="task calc"                              #taskwarrior ver 2.4.0
+alias tac="task active"
+alias tun="task unblocked"
+alias tbk="task blocked"
+alias tls="task list"
+alias tnt="task next"
+alias trd="task ready"
+
 
 # SICP Racket path
 export PATH=$PATH:/Applications/Racket\ v7.3/bin/
@@ -336,7 +347,8 @@ function build_prompt() {
 #MACOS prompt
 function test_prompt() {
     #PS1="\t \D{%D} $Cyan\$(dirs)"
-    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\$(dirs)"
+    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\W "
+    #PS1="[\h \t $(date +%m/%d/%y)] $Cyan\$(dirs)"
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
 }
