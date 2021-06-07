@@ -31,13 +31,14 @@ Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
+Plug 'tpope/vim-eunuch'         "UNIX shell commands
 "Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
 "Plug 'maralla/completor.vim'
-Plug 'jiangmiao/auto-pairs'
+"Plug 'jiangmiao/auto-pairs'
 Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
 Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
@@ -407,7 +408,7 @@ endif
 
 " Don't move on *
 " I'd use a function for this but Vim clobbers the last search when you're in
-" a function so fuck it, practicality beats purity.
+" a function so screw it, practicality beats purity.
 nnoremap <silent> * :let stay_star_view = winsaveview()<cr>*:call winrestview(stay_star_view)<cr>
 nnoremap <silent> # :let stay_star_view = winsaveview()<cr>#:call winrestview(stay_star_view)<cr>
 
