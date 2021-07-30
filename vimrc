@@ -21,6 +21,8 @@
 " diffthis diffoff to compare 2x open buffer files
 " Gvdiff <branch>:<file> to view changes between files / names / removed stuff
 " Gvdiff hash^ to view a before after change
+"
+" :%!jq .     - Json formatting
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -289,6 +291,7 @@ nnoremap <D-RIGHT> <C-W>>
 
 "go specific stuffs
 let g:go_fmt_command = "goimports"
+let g:go_version_warning = 0
 nnoremap <C-G> :! go run %<CR>
 nnoremap <C-F> gg ''
 

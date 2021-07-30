@@ -251,12 +251,12 @@ alias gac="git commit -am "
 alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'     #git log old
 alias gl='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'  #git log head
 alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
-alias glf='git log  --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
-alias glc='git log  --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log compare
-alias glh='git log  --all --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log compare
+alias glf='git log  --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new no graph
+alias glc='git log  --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log compare format
+alias glh='git log  --all --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log all compare format
 alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log verbose
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log all
-alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log S?
+alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log short
 alias gco='git checkout'           # Checkout a branch or file
 alias mast='git checkout master'           # Checkout master branch
 alias gbv='git branch -vvr'           # Checkout master branch
