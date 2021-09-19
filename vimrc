@@ -170,11 +170,11 @@ set wildignorecase              " Ignore case when completing file names and dir
 "  Colors 
 " ----------------------------------------------------------------------------
 set background=dark
-"colorscheme badwolf    "golang cli
+colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
 "colorscheme monokai_curs    "golang cli
-colorscheme Tomorrow-Night-Bright
+"colorscheme Tomorrow-Night-Bright
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -192,6 +192,12 @@ if &diff
         highlight DiffText term=reverse cterm=bold ctermbg=red ctermfg=black
         highlight DiffDelete term=reverse cterm=bold ctermbg=red ctermfg=black
 endif
+
+" git-gutter color
+"highlight SignColumn ctermbg=black
+highlight clear SignColumn
+let g:gitgutter_set_sign_backgrounds = 1
+"highlight SignColumn guibg=darkgrey
 
 " Highlight trailing whitespace characters
 :highlight ExtraWhitespace ctermbg=red guibg=red
