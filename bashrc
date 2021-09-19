@@ -51,7 +51,7 @@ alias trd="task ready"
 
 
 # SICP Racket path
-export PATH=$PATH:/Applications/Racket\ v7.3/bin/
+export PATH=$PATH:/Applications/Racket\ v7.3/bin/:/usr/sbin:/usr/share/bcc/tools/
 
 # MAC terminal colors
 export CLICOLOR=1
@@ -73,10 +73,19 @@ HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -lath'
 export HISTIGNORE
 
 #golang 1.8 requires devtools-6
-source /opt/rh/devtoolset-6/enable
+if [ -f /opt/rh/devtoolset-6/enable ]; then
+    source /opt/rh/devtoolset-6/enable
+fi
 
 #skip, cgo pointer to cgo pointer warnings for slice's
 export GODEBUG=cgocheck=0
+
+# add go to path
+export PATH=$PATH:/usr/local/go/bin
+
+# couldnt find working directory gopls vimgo
+#let g:go_null_module_warning = 0
+#let g:go_debug=['shell-commands']
 
 #ssh-add -K <path_to_private_key>
 # or put in .bash_profile, to keep private
@@ -269,7 +278,7 @@ alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log all
 alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log S?
 alias gco='git checkout'           # Checkout a branch or file
-alias mast='git checkout master'           # Checkout master branch
+alias main='git checkout master'           # Checkout master branch
 alias gbv='git branch -vvr'           # Checkout master branch
 #the next 2x are similar to this view - git log --graph --abbrev-commit --pretty=oneline release/1.1..master
 alias gcomp="diff -y <(git log --oneline ) <(git log --oneline master) |head -20"
@@ -356,3 +365,4 @@ PROMPT_COMMAND=test_prompt
 ###################End zsh-like prompt settings ###################################
 
 [[ -s "/home/chunter/.gvm/scripts/gvm" ]] && source "/home/chunter/.gvm/scripts/gvm"
+. "$HOME/.cargo/env"
