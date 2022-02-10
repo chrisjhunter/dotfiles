@@ -125,6 +125,8 @@ shopt -s histappend
 # Save multi-line commands as one command
 shopt -s cmdhist
 
+# auto cd to dir name
+# shopt -s autocd
 ################FUNCTIONS##########################
 
 #alias f="find . \"*$1*\""
@@ -225,7 +227,34 @@ function gp() {
 function gofind() {
     grep $2 $(find . -type f -name \*$1)
 }
-
+function usage() {
+  echo "Usage: $0 <name> [options]"
+}
+#https://superuser.com/questions/611538/is-there-a-way-to-display-a-countdown-or-stopwatch-timer-in-a-terminal
+################pomo###################
+function countdown(){
+  # Error handling omitted (for now)
+  if [[ "$#" -ne 1 ]]; then
+          usage
+          return 1
+  elif  [[ "$1" == -h ]]; then
+    usage
+    return 0
+  else
+           date1=$((`date +%s` + $1));
+           while [ "$date1" -ge `date +%s` ]; do
+                 echo -ne "$(date -u --date @$(($date1 - `date +%s`)) +%H:%M:%S)\r";
+                 sleep 0.1
+           done
+  fi
+}
+function stopwatch(){
+  date1=`date +%s`;
+   while true; do
+    echo -ne "$(date -u --date @$((`date +%s` - $date1)) +%H:%M:%S)\r";
+    sleep 0.1
+   done
+}
 
 ################sysadmin like aliases###################
 alias godocweb='godoc -http=:6060' # Spawns a godoc web server
@@ -234,6 +263,10 @@ alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-termin
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
 alias tree="tree -I vendor"
+alias ntoe="note"
+alias dmesg="dmesg -T"
+
+
 #set for macbook
 # added case above
 #alias ls="ls -G"
@@ -246,6 +279,7 @@ alias rm="rm -vi"
 alias rmf="rm -v"
 alias mkdir='mkdir -pv'                  # -p creates parent directories as needed, -v ouputs to console when it does
 alias grep='grep --color'                  # always color
+#alias grep='ack'                  # always color
 alias ..='cd ../'                           # Go back 1 directory level
 alias ...='cd ../../'                       # Go back 2 directory levels
 alias ..3='cd ../../../'                     # Go back 3 directory levels
@@ -254,6 +288,8 @@ alias ..5='cd ../../../../../'               # Go back 5 directory levels
 alias ..6='cd ../../../../../../'            # Go back 6 directory levels
 alias hs="history | grep"
 alias lb="ls -lath ~/.vim/bundle/"
+alias vi="vim ~/vimwiki/index.md"
+alias vd="vim ~/vimwiki/diary/diary.md"
 alias vb="vim ~/.bashrc"
 alias vv="vim ~/.vimrc"
 alias vs="vim ~/.ssh/config"
