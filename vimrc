@@ -53,7 +53,29 @@ Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
 Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
+"" On-demand lazy load
+"Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+Plug 'liuchengxu/vim-which-key'
 call plug#end()
+
+" preq for vim-which-key
+set notimeout
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" MULTIPURPOSE TAB KEY
+" Indent if we're at the beginning of a line. Else, do completion.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
+inoremap <expr> <tab> InsertTabWrapper()
+inoremap <s-tab> <c-n>
+
 
 " Vim Wiki
 let wiki_global = {}
@@ -159,7 +181,7 @@ set shiftwidth=4                " Control how many columns text is indented with
 set diffopt+=vertical           "open diffs vertically by default
 
 " small indicators for long lines cut off by screen / window size
-"set listchars=extends:>,precedes:<
+set listchars=extends:>,precedes:<
 
 " Persistent undo
 set undofile
@@ -201,8 +223,8 @@ set wildignorecase              " Ignore case when completing file names and dir
 set background=dark
 "colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
-"colorscheme ir_black    "golang cli
-colorscheme monokai_curs    "golang cli
+colorscheme ir_black    "golang cli
+"colorscheme monokai_curs    "golang cli
 "colorscheme Tomorrow-Night-Bright
 
 " Highlight

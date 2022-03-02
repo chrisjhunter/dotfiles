@@ -37,17 +37,31 @@ case $OS in
   *) ;;
 esac
 
+#https://oscarnajera.com/2020/10/fun-with-rofi-and-guile-a-minimal-habit-tracker/
+habitlog() {
+    echo $(date +%s),${2:-1} >> "$HOME/habits/${1:-myhabit}.csv"
+}
+
+# https://gitlab.com/GasparVardanyan/dotfiles/-/blob/master/dotfiles/zsh/.zshrc
+#Busy, a joke to friends
+alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
+alias f="fortune | cowsay | lolcat"
+alias chess="telnet freechess.org"
+
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 export TASKDDATA=/var/lib/taskd
 export EDITOR=vim
 alias in="task add +inbox"
 alias calc="task calc"                              #taskwarrior ver 2.4.0
 alias tac="task active"
+alias taw="task waiting"
 alias tun="task unblocked"
 alias tbk="task blocked"
 alias tls="task list"
 alias tnt="task next"
 alias trd="task ready"
+alias th="task next +home limit:20"
+alias tw="task next +work limit:20"
 
 
 # SICP Racket path
@@ -81,7 +95,7 @@ fi
 export GODEBUG=cgocheck=0
 
 # add go to path
-export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin
 
 # couldnt find working directory gopls vimgo
 #let g:go_null_module_warning = 0
@@ -262,7 +276,7 @@ alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are 
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
-alias tree="tree -I vendor"
+alias tree="tree -I vendor -fNpugshFviC"
 alias ntoe="note"
 alias dmesg="dmesg -T"
 
@@ -270,7 +284,7 @@ alias dmesg="dmesg -T"
 #set for macbook
 # added case above
 #alias ls="ls -G"
-alias ll="ls -lath"                     # long, all, human readable, sort by time
+alias ll="ls -lathr"                     # long, all, human readable, sort by time
 alias lr="ls -lRath"                    # long, all, human readable, sort by time, recursive
 alias lss="ls -laSh"                    # long, all, human readable, sort by size
 alias cp="cp -vi"                       # -v verbose -i request confirmation before overwrite
@@ -289,7 +303,7 @@ alias ..6='cd ../../../../../../'            # Go back 6 directory levels
 alias hs="history | grep"
 alias lb="ls -lath ~/.vim/bundle/"
 alias vi="vim ~/vimwiki/index.md"
-alias vd="vim ~/vimwiki/diary/diary.md"
+alias vd="vim ~/vimwiki/zettel/diary/diary.md"
 alias vb="vim ~/.bashrc"
 alias vv="vim ~/.vimrc"
 alias vs="vim ~/.ssh/config"
