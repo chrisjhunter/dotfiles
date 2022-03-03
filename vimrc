@@ -223,8 +223,8 @@ set wildignorecase              " Ignore case when completing file names and dir
 set background=dark
 "colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
-colorscheme ir_black    "golang cli
-"colorscheme monokai_curs    "golang cli
+"colorscheme ir_black    "golang cli
+colorscheme monokai_curs    "golang cli
 "colorscheme Tomorrow-Night-Bright
 
 " Highlight
