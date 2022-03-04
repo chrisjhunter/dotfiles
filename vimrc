@@ -21,6 +21,7 @@
 " diffthis diffoff to compare 2x open buffer files
 " Gvdiff <branch>:<file> to view changes between files / names / removed stuff
 " Gvdiff hash^ to view a before after change
+" :term - ctrl-w + (shift)N = normal mode
 "
 " :%!jq .     - Json formatting
 
@@ -34,25 +35,68 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
 Plug 'tpope/vim-eunuch'         "UNIX shell commands
-"Plug 'ctrlpvim/ctrlp.vim'       "Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
+Plug 'rust-lang/rust.vim'
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
-"Plug 'maralla/completor.vim'
-"Plug 'jiangmiao/auto-pairs'
 Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
 Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
 Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <CTRL-R> in insert mode so you can see the contents of the registers
 Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
 Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
-"Plug 'Valloric/YouCompleteMe'
 Plug 'w0rp/ale'
-Plug 'ervandew/supertab'
 Plug 'plasticboy/vim-markdown'
 Plug 'wlangstroth/vim-racket'
+Plug 'mattn/calendar-vim'
+Plug 'vimwiki/vimwiki'
+Plug 'sheerun/vim-polyglot'
+"Plug 'tbabej/taskwiki' "requires python support
+"" On-demand lazy load
+"Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+Plug 'liuchengxu/vim-which-key'
 call plug#end()
+
+" preq for vim-which-key
+set notimeout
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" MULTIPURPOSE TAB KEY
+" Indent if we're at the beginning of a line. Else, do completion.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! InsertTabWrapper()
+    let col = col('.') - 1
+    if !col || getline('.')[col - 1] !~ '\k'
+        return "\<tab>"
+    else
+        return "\<c-p>"
+    endif
+endfunction
+inoremap <expr> <tab> InsertTabWrapper()
+inoremap <s-tab> <c-n>
+
+
+" Vim Wiki
+let wiki_global = {}
+let wiki_global.syntax = 'markdown'
+let wiki_global.ext = '.md'
+let wiki_global.auto_diary_index = 1
+let g:vimwiki_global_ext = 0
+
+let parent_wiki = copy(wiki_global)
+let parent_wiki.path = '~/vimwiki/'
+
+let zettel_wiki = copy(wiki_global)
+let zettel_wiki.path = '~/vimwiki/zettel'
+let zettel_wiki.diary_rel_path = 'diary/'
+
+let zettel_2021 = copy(wiki_global)
+let zettel_2021.path = '~/vimwiki/2021'
+let zettel_2021.diary_rel_path = '.'
+
+let g:vimwiki_list = [parent_wiki, zettel_2021, zettel_wiki]
+nnoremap <leader>c :Calendar <cr>
 
 if has('clipboard')
   if has('unnamedplus')  " When possible use + register for copy-paste
@@ -61,16 +105,23 @@ if has('clipboard')
     set clipboard=unnamed
   endif
 endif
+
+"set dictionary?
+
+"k{dict}	scan the file {dict}.  Several "k" flags can be given,
+	"The default is ".,w,b,u,t,i", which means to scan:
+	"   1. the current buffer
+	"   2. buffers in other windows
+	"   3. other loaded buffers
+	"   4. unloaded buffers
+	"   5. tags
+	"   6. included files
+set complete-=k
+set complete+=k
+set dictionary+=/usr/share/dict/words
+
 "gocode
 let g:go_gocode_unimported_packages = 1
-"let g:completor_python_binary = '/usr/bin/python'
-"let g:asyncomplete_auto_popup = 0
-"=======================jose de la o=======================
-"let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
-let g:SuperTabContextDefaultCompletionType = "<c-n>"
-"let g:SuperTabDefaultCompletionType = "<c-n>"
-let g:SuperTabClosePreviewOnPopupClose = 1
-set omnifunc=syntaxcomplete#Complete
 
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
@@ -130,7 +181,7 @@ set shiftwidth=4                " Control how many columns text is indented with
 set diffopt+=vertical           "open diffs vertically by default
 
 " small indicators for long lines cut off by screen / window size
-"set listchars=extends:>,precedes:<
+set listchars=extends:>,precedes:<
 
 " Persistent undo
 set undofile
@@ -170,10 +221,10 @@ set wildignorecase              " Ignore case when completing file names and dir
 "  Colors 
 " ----------------------------------------------------------------------------
 set background=dark
-colorscheme badwolf    "golang cli
+"colorscheme badwolf    "golang cli
 "colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
-"colorscheme monokai_curs    "golang cli
+colorscheme monokai_curs    "golang cli
 "colorscheme Tomorrow-Night-Bright
 
 " Highlight
@@ -293,7 +344,11 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap <C-=> <C-w>+
 nnoremap <C--> <C-w>-
 nnoremap <D-LEFT> <C-W><
-nnoremap <D-RIGHT> <C-W>>
+nnoremap <A-RIGHT> <C-W>>
+":help key-notation - 
+"http://vimdoc.sourceforge.net/htmldoc/intro.html#notation
+"nnoremap <D-LEFT> <C-W><
+"nnoremap <D-RIGHT> <C-W>>
 
 "go specific stuffs
 let g:go_fmt_command = "goimports"
@@ -309,6 +364,8 @@ nnoremap <silent><leader>h :set hls! hls? <cr>
 nnoremap <silent> <leader>eb :e ~/.bashrc<CR>
 nnoremap <silent> <leader>es :e ~/.ssh/config<CR>
 nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
+nnoremap <silent> <leader>ei :e ~/vimwiki/index.md<CR>
+nnoremap <silent> <leader>ed :e ~/vimwiki/diary/diary.md<CR>
 nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
 
 "Toggle rainbow parens on / off
@@ -328,7 +385,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 " searchs for word under cursor
-nnoremap <Leader>8        :Ack! "\b<cword>\b" <CR>
+nnoremap <Leader>8 :Ack! "\b<cword>\b" <CR>
 
 " Loads the session from the current directory if, and only if, no file names
 " were passed in via the command line.
@@ -501,3 +558,11 @@ noremap L g_
 
 "autocmd TextYankPost :vsplit 
 "autocmd TextYankPost * call RegbufOpen
+
+"Damian-conway
+"=====[ Correct common mistypings in-the-fly ]=======================
+"
+iab    retrun  return
+iab     pritn  print
+iab       teh  the
+iab      liek  like
