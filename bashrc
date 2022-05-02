@@ -45,7 +45,7 @@ habitlog() {
 # https://gitlab.com/GasparVardanyan/dotfiles/-/blob/master/dotfiles/zsh/.zshrc
 #Busy, a joke to friends
 alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
-alias f="fortune | cowsay | lolcat"
+#alias f="fortune | cowsay | lolcat"
 alias chess="telnet freechess.org"
 
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
@@ -177,22 +177,6 @@ function extract () {
     else
       echo "'$1' is not a valid file!"
     fi
-}
-
-# create daily scratch notes
-function note ()
-{
-  dyna_year=$(date +%Y);
-  dyna_month=$(date +%m);
-  dyna_day=$(date +%d);
-  dyna_dir=~/Documents/Notes/$dyna_year/$dyna_month;
-  dyna_file=$dyna_day.md;
-  if [ ! -d $dyna_dir ]; then
-      mkdir -p $dyna_dir;
-      #find ~/logs/ -type d -mtime +15 -exec rm -rf {} \;
-      find ~/Documents/Notes/$dyna_year -type f ! -name "*.gz" -mtime +1 -exec gzip -9q {} \;
-  fi
-  vim $dyna_dir/$dyna_file;
 }
 
 #auto logging telnet

@@ -54,12 +54,20 @@ Plug 'vimwiki/vimwiki'
 Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
 "" On-demand lazy load
-"Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-Plug 'liuchengxu/vim-which-key'
 call plug#end()
 
-" preq for vim-which-key
-set notimeout
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+"if !exists(":DiffOrig")
+  "command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  "\ | wincmd p | diffthis
+"endif
+"https://stackoverflow.com/questions/6426154/taking-a-quick-look-at-difforig-then-switching-back
+command DiffOrig let g:diffline = line('.') | vert new | set bt=nofile | r # | 0d_ | diffthis | :exe "norm! ".g:diffline."G" | wincmd p | diffthis | wincmd p
+nnoremap <Leader>dd :DiffOrig<cr>
+nnoremap <leader>dc :q<cr>:diffoff<cr>:exe "norm! ".g:diffline."G"<cr>
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
@@ -86,6 +94,7 @@ let g:vimwiki_global_ext = 0
 
 let parent_wiki = copy(wiki_global)
 let parent_wiki.path = '~/vimwiki/'
+let parent_wiki.diary_rel_path = 'zettel/diary/'
 
 let zettel_wiki = copy(wiki_global)
 let zettel_wiki.path = '~/vimwiki/zettel'
@@ -256,7 +265,7 @@ match ExtraWhitespace /\s\+$/
 
 " Show matching brackets.
 set showmatch                   " Highlight matching [{()}]
-hi MatchParen cterm=bold ctermbg=none ctermfg=magenta
+hi MatchParen cterm=bold ctermbg=none ctermfg=Cyan
 
 " Highlights if your typing past column 80
 highlight ColorColumn ctermbg=magenta
@@ -299,7 +308,7 @@ nnoremap <leader><F7> :set spell!<cr>
 nnoremap <leader>q :q!<cr>
 
 " Write file
-nnoremap <leader>w :w<cr>
+nnoremap <leader>s :w<cr>
 
 " Write + quit
 nnoremap <leader>z :wq!<cr>
@@ -428,7 +437,7 @@ map <leader>a ggVG
 
 " Open go doc in vertical window or horizontal
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
-au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
+"au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 
 "yank until end of line
@@ -525,7 +534,7 @@ imap ˚ <Up>
 imap ¬ <Right>
 
 " Pandoc and Notes {{{2
-command! -nargs=1 Ngrep lvimgrep "<args>" $NOTES_DIR/**/*.txt
+"command! -nargs=1 Ngrep lvimgrep "<args>" $NOTES_DIR/**/*.txt
 "nnoremap <leader>[ :Ngrep
 nnoremap <C-n> :cnext<cr>z.
 nnoremap <C-p> :cprev<cr>z.
