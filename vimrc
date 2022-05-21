@@ -56,6 +56,8 @@ Plug 'sheerun/vim-polyglot'
 "" On-demand lazy load
 call plug#end()
 
+
+let g:rustfmt_autosave = 1
 " Convenient command to see the difference between the current buffer and the
 " file it was loaded from, thus the changes you made.
 " Only define it when not defined already.
