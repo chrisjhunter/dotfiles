@@ -12,6 +12,8 @@
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
 " opens files only, ignores directory listings
 " find . -xtype f -exec vim {} +
+" grep and open results list - vim $(grin -l regex .)
+"  vim $(git diff --name-only master)
 " vim ./* ./*/* - open recursively, 1 dir deep
 " C-v , arrow down, shift+i , then type, then esc (to add text to multiple lines
 " How many lines in vimrc (grep -v '^\s*"' ~/.vimrc | grep -v "^$"|wc -l)
@@ -22,6 +24,8 @@
 " Gvdiff <branch>:<file> to view changes between files / names / removed stuff
 " Gvdiff hash^ to view a before after change
 " :term - ctrl-w + (shift)N = normal mode
+" /usr/bin/vim -u NONE
+" http://vimdoc.sourceforge.net/htmldoc/syntax.html
 "
 " :%!jq .     - Json formatting
 
@@ -34,15 +38,12 @@ Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
-Plug 'tpope/vim-eunuch'         "UNIX shell commands
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'rust-lang/rust.vim'
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
-Plug 'zhaocai/minibufexpl.vim'  "displays open buffers near your status bar ( I use buffers a lot )
 Plug 'tyru/regbuf.vim'          "gives you list of registers
-Plug 'dahu/vim-lotr'            "LOTR displays a persistent view of your Vim :registers in a sidebar window.
 Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <CTRL-R> in insert mode so you can see the contents of the registers
 Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
 Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
@@ -53,13 +54,8 @@ Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
 Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
-"" On-demand lazy load
-"Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-Plug 'liuchengxu/vim-which-key'
 call plug#end()
 
-" preq for vim-which-key
-set notimeout
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
@@ -82,10 +78,9 @@ let wiki_global = {}
 let wiki_global.syntax = 'markdown'
 let wiki_global.ext = '.md'
 let wiki_global.auto_diary_index = 1
+let wiki_global.path = '~/vimwiki/'
+let wiki_global.diary_rel_path = 'zettel/diary/'
 let g:vimwiki_global_ext = 0
-
-let parent_wiki = copy(wiki_global)
-let parent_wiki.path = '~/vimwiki/'
 
 let zettel_wiki = copy(wiki_global)
 let zettel_wiki.path = '~/vimwiki/zettel'
@@ -95,7 +90,7 @@ let zettel_2021 = copy(wiki_global)
 let zettel_2021.path = '~/vimwiki/2021'
 let zettel_2021.diary_rel_path = '.'
 
-let g:vimwiki_list = [parent_wiki, zettel_2021, zettel_wiki]
+let g:vimwiki_list = [wiki_global, zettel_2021, zettel_wiki]
 nnoremap <leader>c :Calendar <cr>
 
 if has('clipboard')
@@ -106,19 +101,7 @@ if has('clipboard')
   endif
 endif
 
-"set dictionary?
 
-"k{dict}	scan the file {dict}.  Several "k" flags can be given,
-	"The default is ".,w,b,u,t,i", which means to scan:
-	"   1. the current buffer
-	"   2. buffers in other windows
-	"   3. other loaded buffers
-	"   4. unloaded buffers
-	"   5. tags
-	"   6. included files
-set complete-=k
-set complete+=k
-set dictionary+=/usr/share/dict/words
 
 "gocode
 let g:go_gocode_unimported_packages = 1
@@ -147,7 +130,6 @@ filetype plugin indent on       " Turn on filetype detection, plugin and indent.
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
-"set nowrap
 set wrap 
 set linebreak 
 set nolist
@@ -197,11 +179,6 @@ set writebackup
 " ----------------------------------------------------------------------------
 "  Completion 
 " ----------------------------------------------------------------------------
-"let g:completor_gocode_binary = '~/go/bin/gocode'
-"let g:go_gocode_unimported_packages = 1
-"let g:ale_open_list = 1
-"let g:ale_lint_on_text_changed = 'never'
-"nnoremap <F7> :ALEToggle<cr>
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
 set wildignore+=.hg,.git,.svn                    " Version control
@@ -216,6 +193,17 @@ set wildignore+=migrations                       " Django migrations
 set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 set wildignorecase              " Ignore case when completing file names and directories.
+"k{dict}	scan the file {dict}.  Several "k" flags can be given,
+	"The default is ".,w,b,u,t,i", which means to scan:
+	"   1. the current buffer
+	"   2. buffers in other windows
+	"   3. other loaded buffers
+	"   4. unloaded buffers
+	"   5. tags
+	"   6. included files
+set dictionary?
+set dictionary+=/usr/share/dict/words
+set complete+=k
 
 " ----------------------------------------------------------------------------
 "  Colors 
@@ -270,9 +258,6 @@ nnoremap j gj
 nnoremap k gk
 nnoremap <up> gk
 nnoremap <down> gj
-"recenter screen on cursor when changing lines
-"nnoremap j gjzz
-"nnoremap k gkzz
 
 " view buffer list
 nnoremap <leader>b :buffers <cr>
@@ -353,8 +338,6 @@ nnoremap <A-RIGHT> <C-W>>
 "go specific stuffs
 let g:go_fmt_command = "goimports"
 let g:go_version_warning = 0
-nnoremap <C-G> :! go run %<CR>
-nnoremap <C-F> gg ''
 
 "Toggle line nums + relative nums on / off
 nnoremap <silent><leader>n :set nu! rnu! nu? rnu? <cr><cr>
@@ -365,7 +348,7 @@ nnoremap <silent> <leader>eb :e ~/.bashrc<CR>
 nnoremap <silent> <leader>es :e ~/.ssh/config<CR>
 nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
 nnoremap <silent> <leader>ei :e ~/vimwiki/index.md<CR>
-nnoremap <silent> <leader>ed :e ~/vimwiki/diary/diary.md<CR>
+nnoremap <silent> <leader>ed :e ~/vimwiki/zettel/diary/diary.md<CR>
 nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
 
 "Toggle rainbow parens on / off
@@ -377,7 +360,7 @@ if exists("g:btm_rainbow_color") && g:btm_rainbow_color
 endif
 
 cnoreabbrev Ack Ack!
-nnoremap <Leader>g :Ack!<Space>
+nnoremap <Leader>g :Ack! -i<Space>
 
 " These mappings will make it so that going to the next one in a search will
 " center on the line it's found in.
@@ -527,6 +510,7 @@ imap ¬ <Right>
 " Pandoc and Notes {{{2
 command! -nargs=1 Ngrep lvimgrep "<args>" $NOTES_DIR/**/*.txt
 "nnoremap <leader>[ :Ngrep
+"moves through search results in quickfix list and centers text
 nnoremap <C-n> :cnext<cr>z.
 nnoremap <C-p> :cprev<cr>z.
 hi! link QuickFixLine Search
@@ -553,8 +537,7 @@ noremap L g_
 "nnoremap <silent> "" :registers "0123456789abcdefghijklmnopqrstuvwxyz*+.<CR>
 "nnoremap <silent> "" :RegbufOpen <CR>
 "nnoremap <silent> "" :registers <CR>
-"nnoremap <silent><leader>L :LOTRToggle<cr>
-"nnoremap <silent><leader>L :LOTRToggle<cr>
+nnoremap <leader>r :reg <CR>
 
 "autocmd TextYankPost :vsplit 
 "autocmd TextYankPost * call RegbufOpen
