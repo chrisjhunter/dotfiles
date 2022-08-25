@@ -22,8 +22,10 @@ ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/bash_profile ~/.bash_profile
 ln -s ~/dotfiles/inputrc ~/.inputrc
 ln -s ~/dotfiles/gitignore_global ~/.gitignore_global
+mkdir -p $HOME/go/{bin,src,pkg}
+mkdir -p $HOME/.vim/{autoload,bundle,colors,doc,plugin}
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 ```
-
-source ~/.bashrc
-
 :PlugInstall

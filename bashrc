@@ -45,7 +45,6 @@ habitlog() {
 # https://gitlab.com/GasparVardanyan/dotfiles/-/blob/master/dotfiles/zsh/.zshrc
 #Busy, a joke to friends
 alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
-alias f="fortune | cowsay | lolcat"
 alias chess="telnet freechess.org"
 
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
@@ -95,7 +94,7 @@ fi
 export GODEBUG=cgocheck=0
 
 # add go to path
-export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin
+export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin:/usr/local/bin/
 
 # couldnt find working directory gopls vimgo
 #let g:go_null_module_warning = 0
@@ -416,3 +415,5 @@ PROMPT_COMMAND=test_prompt
 
 [[ -s "/home/chunter/.gvm/scripts/gvm" ]] && source "/home/chunter/.gvm/scripts/gvm"
 . "$HOME/.cargo/env"
+
+[[ -s "/home/chris/.gvm/scripts/gvm" ]] && source "/home/chris/.gvm/scripts/gvm"
