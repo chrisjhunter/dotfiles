@@ -56,7 +56,6 @@ Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
 call plug#end()
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
 " Indent if we're at the beginning of a line. Else, do completion.
@@ -115,12 +114,15 @@ nnoremap [a :ALEPreviousWrap<CR>
 nnoremap ]A :ALELast<CR>
 nnoremap [A :ALEFirst<CR>
 
+"ale closed by default
+let g:ale_enabled = 0
+
 " Write this in your vimrc file
 "let g:ale_set_loclist = 0
 "let g:ale_set_quickfix = 1
 
 " ----------------------------------------------------------------------------
-"  Endplug 
+"  Endplug
 " ----------------------------------------------------------------------------
 " ----------------------------------------------------------------------------
 "  General Config
@@ -177,7 +179,7 @@ set directory=~/.vim/tmp/swap//
 set writebackup
 
 " ----------------------------------------------------------------------------
-"  Completion 
+"  Compleation
 " ----------------------------------------------------------------------------
 set wildmode=list:longest,list:full
 set wildmenu                    " Visual autocomplete for command menu
@@ -206,11 +208,10 @@ set dictionary+=/usr/share/dict/words
 set complete+=k
 
 " ----------------------------------------------------------------------------
-"  Colors 
+"  Colors
 " ----------------------------------------------------------------------------
 set background=dark
 "colorscheme badwolf    "golang cli
-"colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
 colorscheme monokai_curs    "golang cli
 "colorscheme Tomorrow-Night-Bright
@@ -251,7 +252,7 @@ highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn','\%81v',100)
 
 " ----------------------------------------------------------------------------
-"  Custom Settings 
+"  Custom Settings
 " ----------------------------------------------------------------------------
 "move by lines on screen, instead of linenumber
 nnoremap j gj
@@ -274,8 +275,8 @@ nnoremap <leader>f :w!<cr>:e %:h<cr>
 nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
 
 " Insert timestamp
-nnoremap <F5> :read!date<cr>kddA - 
-"nnoremap <F5> :pu=strftime('%c')<cr>kddA - 
+nnoremap <F5> :read!date<cr>kddA -
+"nnoremap <F5> :pu=strftime('%c')<cr>kddA -
 
 " Spell check
 nnoremap <leader><F7> :set spell!<cr>
@@ -284,7 +285,7 @@ nnoremap <leader><F7> :set spell!<cr>
 nnoremap <leader>q :q!<cr>
 
 " Write file
-nnoremap <leader>w :w<cr>
+nnoremap <leader>s :w<cr>
 
 " Write + quit
 nnoremap <leader>z :wq!<cr>
@@ -316,6 +317,9 @@ endif
 "https://vim.fandom.com/wiki/Best_Vim_Tips
 "Basic use
 "<Esc> is the escape key or use <ctrl>[  sometimes written as  <C-[>
+
+"remap due to win10 <C-v> bind
+noremap <C-v> <C-q>
 
 "Switch windows
 noremap <C-k> <C-w>k
@@ -401,17 +405,17 @@ autocmd! VimEnter * :call LoadSession()
 map <leader>a ggVG
 
 " Fugitive {
-    nnoremap <silent> <leader>gs :Gstatus<CR>
+    nnoremap <silent> <leader>gs :Git<CR>
     nnoremap <silent> <leader>gd :Gvdiff master<CR>
     nnoremap <silent> <leader>gc :Gcommit<CR>
-    nnoremap <silent> <leader>gb :Gblame<CR>
-    nnoremap <silent> <leader>gl :Glog<CR>
+    nnoremap <silent> <leader>gb :Git blame<CR>
+    nnoremap <silent> <leader>gl :GcLog<CR>
     nnoremap <silent> <leader>gp :Git push<CR>
  "}
 
 " Open go doc in vertical window or horizontal
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
-au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
+"au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 
 "yank until end of line
@@ -539,7 +543,7 @@ noremap L g_
 "nnoremap <silent> "" :registers <CR>
 nnoremap <leader>r :reg <CR>
 
-"autocmd TextYankPost :vsplit 
+"autocmd TextYankPost :vsplit
 "autocmd TextYankPost * call RegbufOpen
 
 "Damian-conway
@@ -549,3 +553,12 @@ iab    retrun  return
 iab     pritn  print
 iab       teh  the
 iab      liek  like
+
+" comes with tpope/vim-unimpaired
+" Navigate quickfix list with ease
+"nnoremap <silent> [q :cprevious<CR>
+"nnoremap <silent> ]q :cnext<CR>
+" Map the movement command that cycles through diff changes to also center the
+" " line vertically in the window when it is arrived at. It's convenient.
+nnoremap ]c ]cz.
+nnoremap [c [cz.

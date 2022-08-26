@@ -1,6 +1,10 @@
 hardstatus alwayslastline
 hardstatus string '%{= kW} %{=kw}%?%-Lw%?%{r}[%{W}%n*%f%t%?[%u]%?%{r}]%{w}%?%+Lw%?%?%= %{y} %{Y}%H %{g}  %{W}%m/%d/%Y %c%{g}'
 bind r eval "source $HOME/.screenrc" "echo '.screenrc reloaded!'"
+bind j focus down
+bind k focus up
+bind l focus right
+bind h focus left
 term="screen-256color"
 screen -t vim-go 0 bash
 screen -t cli 1 bash
