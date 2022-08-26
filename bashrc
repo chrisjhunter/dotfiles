@@ -1,4 +1,5 @@
 # .bashrc
+# echo $STY
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -332,6 +333,7 @@ alias gbv='git branch -vvr'           # Checkout master branch
 #the next 2x are similar to this view - git log --graph --abbrev-commit --pretty=oneline release/1.1..master
 alias gcomp="diff -y <(git log --oneline ) <(git log --oneline master) |head -20"
 alias gcompa="diff -y <(git log --oneline ) <(git log --oneline master)"
+alias gbh="git for-each-ref --sort='-committerdate:iso8601' --format='%(committerdate:relative)|%(refname:short)|%(committername)' refs/remotes/ refs/heads/| column -s '|' -t"
 
 
 #####################ZSH like PS1 below#####################
