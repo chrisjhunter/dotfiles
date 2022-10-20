@@ -56,21 +56,27 @@ Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
 call plug#end()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Gary Bernhardt
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
 " Indent if we're at the beginning of a line. Else, do completion.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! InsertTabWrapper()
     let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
+    if !col
         return "\<tab>"
-    else
+    endif
+
+    let char = getline('.')[col - 1]
+    if char =~ '\k'
+        " There's an identifier before the cursor, so complete the identifier.
         return "\<c-p>"
+    else
+        return "\<tab>"
     endif
 endfunction
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
-
 
 " Vim Wiki
 let wiki_global = {}
@@ -79,6 +85,7 @@ let wiki_global.ext = '.md'
 let wiki_global.auto_diary_index = 1
 let wiki_global.path = '~/vimwiki/'
 let wiki_global.diary_rel_path = 'zettel/diary/'
+let wiki_global.auto_tags = 1
 let g:vimwiki_global_ext = 0
 
 let zettel_wiki = copy(wiki_global)
@@ -91,6 +98,17 @@ let zettel_2021.diary_rel_path = '.'
 
 let g:vimwiki_list = [wiki_global, zettel_2021, zettel_wiki]
 nnoremap <leader>c :Calendar <cr>
+
+command! Tws call Tws()
+"https://superuser.com/questions/701555/vimscript-how-can-i-call-a-function-but-wait-for-user-input-before-executing-it
+" 1st attempt
+"nnoremap <leader>t :lopen<cr><c-k>:VimwikiSearchTags 
+function! Tws()
+    let cmd = input("", ":VimwikiSearchTags ")
+    exe cmd
+    exec "normal! :lopen\<cr>\<C-W>k"
+endfunction
+nnoremap <leader>t :Tws<cr>
 
 if has('clipboard')
   if has('unnamedplus')  " When possible use + register for copy-paste
@@ -132,8 +150,8 @@ filetype plugin indent on       " Turn on filetype detection, plugin and indent.
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
-set wrap 
-set linebreak 
+set wrap
+set linebreak
 set nolist
 set bs=indent,eol,start     " Backspace over everything in insert mode
 set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
@@ -195,6 +213,8 @@ set wildignore+=migrations                       " Django migrations
 set wildignore+=*.pyc                            " Python byte code
 set wildignore+=*.orig                           " Merge resolution files
 set wildignorecase              " Ignore case when completing file names and directories.
+"set dictionary?
+"
 "k{dict}	scan the file {dict}.  Several "k" flags can be given,
 	"The default is ".,w,b,u,t,i", which means to scan:
 	"   1. the current buffer
@@ -203,7 +223,6 @@ set wildignorecase              " Ignore case when completing file names and dir
 	"   4. unloaded buffers
 	"   5. tags
 	"   6. included files
-set dictionary?
 set dictionary+=/usr/share/dict/words
 set complete+=k
 
@@ -261,7 +280,13 @@ nnoremap <up> gk
 nnoremap <down> gj
 
 " view buffer list
-nnoremap <leader>b :buffers <cr>
+" using this instead of mini-buff-explorer ... sept 2022
+map <silent> <leader>b :ls<cr>:b
+"nnoremap <leader>b :ls<cr>:b
+"nnoremap <leader>b :buffers <cr>
+"nnoremap <leader>b :ls<cr>
+"https://vi.stackexchange.com/questions/2121/how-do-i-have-buffers-listed-in-a-quickfix-window-in-vim
+"nnoremap gb :ls<CR>:b<Space>
 
 " open file explorer
 nnoremap <leader>e :Vexplore<CR>

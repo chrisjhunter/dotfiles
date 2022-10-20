@@ -1,5 +1,7 @@
 # .bashrc
 # echo $STY
+# echo $TMUX
+# history -w        write the current history to the history file
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -54,6 +56,7 @@ export EDITOR=vim
 alias in="task add +inbox"
 alias calc="task calc"                              #taskwarrior ver 2.4.0
 alias tac="task active"
+alias td="task due"
 alias taw="task waiting"
 alias tun="task unblocked"
 alias tbk="task blocked"
@@ -276,7 +279,9 @@ alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are 
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
-alias tree="tree -I vendor -fNpugshFviC"
+#alias tree="ls -ld $PWD/**"
+#alias tree="ls -ld `pwd`/**"
+alias vtree="tree -I vendor -fNpugshFviC"
 alias ntoe="note"
 alias dmesg="dmesg -T"
 
@@ -284,6 +289,7 @@ alias dmesg="dmesg -T"
 #set for macbook
 # added case above
 #alias ls="ls -G"
+alias ld="ls -ld ./**"
 alias ll="ls -lathr"                     # long, all, human readable, sort by time
 alias lr="ls -lRath"                    # long, all, human readable, sort by time, recursive
 alias lss="ls -laSh"                    # long, all, human readable, sort by size
@@ -419,3 +425,12 @@ PROMPT_COMMAND=test_prompt
 . "$HOME/.cargo/env"
 
 [[ -s "/home/chris/.gvm/scripts/gvm" ]] && source "/home/chris/.gvm/scripts/gvm"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export DENO_INSTALL="/home/chris/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
