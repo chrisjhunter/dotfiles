@@ -13,3 +13,5 @@ fi
 #/home/chris/dotfiles/bash_profile:10:export GREP_OPTIONS='--color=always'
 export PATH=~/bin:$PATH:$HOME/.local/bin
 . "$HOME/.cargo/env"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
