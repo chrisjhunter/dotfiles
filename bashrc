@@ -100,6 +100,10 @@ export GODEBUG=cgocheck=0
 # add go to path
 export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin:/usr/local/bin/
 
+# add rust-analyser path
+export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin:/usr/local/bin/:/home/chris/.bin
+export RUST_SRC_PATH='/home/chris/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/'
+
 # couldnt find working directory gopls vimgo
 #let g:go_null_module_warning = 0
 #let g:go_debug=['shell-commands']
@@ -279,6 +283,7 @@ alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are 
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
+#alias vtree="tree -ifpugDs $PWD"
 #alias tree="ls -ld $PWD/**"
 #alias tree="ls -ld `pwd`/**"
 alias vtree="tree -I vendor -fNpugshFviC"
@@ -289,7 +294,7 @@ alias dmesg="dmesg -T"
 #set for macbook
 # added case above
 #alias ls="ls -G"
-alias ld="ls -ld ./**"
+alias ld="ls -ldrt ./**"
 alias ll="ls -lathr"                     # long, all, human readable, sort by time
 alias lr="ls -lRath"                    # long, all, human readable, sort by time, recursive
 alias lss="ls -laSh"                    # long, all, human readable, sort by size
@@ -316,7 +321,7 @@ alias vs="vim ~/.ssh/config"
 
 
 ####################### git aliases ###################
-alias grin="grep -rn --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
+alias grin="grep -rn --ignore-case --color --exclude-dir={.pm2,.npm,.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
 alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
 alias gsc="sub-status"
 alias gs="git status"
@@ -340,6 +345,7 @@ alias gbv='git branch -vvr'           # Checkout master branch
 alias gcomp="diff -y <(git log --oneline ) <(git log --oneline master) |head -20"
 alias gcompa="diff -y <(git log --oneline ) <(git log --oneline master)"
 alias gbh="git for-each-ref --sort='-committerdate:iso8601' --format='%(committerdate:relative)|%(refname:short)|%(committername)' refs/remotes/ refs/heads/| column -s '|' -t"
+alias gbs="git-branch-status"
 
 
 #####################ZSH like PS1 below#####################

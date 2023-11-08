@@ -7,7 +7,7 @@
 ":! go run % -d=debug
 " :find <regex>
 " :b <regex>
-" :%s/\s\+$//e trim whitepsace
+" :%s/\s\+$//e trim whitespace
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
 " opens files only, ignores directory listings
@@ -26,7 +26,8 @@
 " :term - ctrl-w + (shift)N = normal mode
 " /usr/bin/vim -u NONE
 " http://vimdoc.sourceforge.net/htmldoc/syntax.html
-"
+" browse oldfiles
+" vim +'redir! > cmds | sil com' +q && cut -b5- cmds | cut -d ' ' -f 1
 " :%!jq .     - Json formatting
 
 " ----------------------------------------------------------------------------
@@ -40,15 +41,17 @@ Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
-Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim'       "vim rust plugin
+Plug 'prabirshrestha/vim-lsp'   "language server protocol for rust goto definition
+Plug 'mattn/vim-lsp-settings'   "lsp enable
 Plug 'mileszs/ack.vim'          "vim grep replacement
 Plug 'EinfachToll/DidYouMean'   "Vim plugin which asks for the right file to open.
 Plug 'tyru/regbuf.vim'          "gives you list of registers
 Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <CTRL-R> in insert mode so you can see the contents of the registers
 Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
 Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
-Plug 'w0rp/ale'
-Plug 'plasticboy/vim-markdown'
+Plug 'dense-analysis/ale'
+Plug 'tpope/vim-markdown'
 Plug 'wlangstroth/vim-racket'
 Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
@@ -56,6 +59,73 @@ Plug 'sheerun/vim-polyglot'
 "Plug 'tbabej/taskwiki' "requires python support
 call plug#end()
 
+" Write this in your vimrc file
+"let g:ale_lint_on_text_changed = 'never'
+"let g:ale_open_list = 1
+nnoremap <F7> :ALEToggle<cr>
+nnoremap ]a :ALENextWrap<CR>
+nnoremap [a :ALEPreviousWrap<CR>
+nnoremap ]A :ALELast<CR>
+nnoremap [A :ALEFirst<CR>
+nnoremap [d :ALEDetail<CR>
+nnoremap ]d :ALEDetail<CR>
+
+"ale closed by default
+"let g:ale_enabled = 0
+"https://github.com/prabirshrestha/vim-lsp
+"https://github.com/mattn/vim-lsp-settings
+let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
+
+let g:ale_linters = {'rust': ['analyzer']}
+let g:ale_fixers = { 'rust': ['rustfmt']}
+" Write this in your vimrc file
+"let g:ale_set_loclist = 0
+"let g:ale_set_quickfix = 1
+let g:rustfmt_autosave = 1
+"let g:ale_open_list = 1
+"let g:ale_completion_enabled = 1
+"let g:ale_echo_msg_error_str = 'E'
+"let g:ale_echo_msg_warning_str = 'W'
+"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+augroup filetype_rust
+    au!
+    "ALE commands were causing vim to open in replace mode
+    "https://stackoverflow.com/questions/51388353/vim-changes-into-replace-mode-on-startup
+    nnoremap <esc>^[ <esc>^[
+    let g:ale_enabled = 1
+    "au BufRead,BufNewFile *.rs nnoremap K :ALEHover<CR>
+    "nnoremap <C-]> :ALEGoToDefinition<cr>
+    "nnoremap <C-[> :ALEFindReferences<cr>
+    "nnoremap <C-h> :ALEHover<cr>
+    "ctrl-k+h already in use to move windows
+    "nnoremap <C-k> :ALEHover
+    "nnoremap <C-h> :ALEDetail<cr>
+    "nnoremap <silent> <Leader>d :ALEDetail<CR>
+    "au BufRead,BufNewFile *.rs nnoremap <C-]> :ALEGoToDefinition -vsplit<CR>
+    "au BufRead,BufNewFile *.rs nnoremap <C-[> :ALEFindReferences -vsplit<cr>
+    "au Filetype rs nnoremap <leader>v :vsp <CR>:exe "ALEGoToDefinition" <CR>
+    au BufRead,BufNewFile *.rs nnoremap <C-]> :vsp <CR> :ALEGoToDefinition<CR>
+    au BufRead,BufNewFile *.rs nnoremap <C-[> :ALEFindReferences<cr>
+    au BufRead,BufNewFile *.rs nnoremap K :ALEHover<CR>
+    "nnoremap <silent> <c-p> :ALEHover<CR>
+augroup END
+let g:ale_list_vertical = 1
+"https://github.com/creativenull/dotfiles/blob/32f9bf9a3e8252bd5df9e36530574698a51e3cf8/config/nvim/init.vim#L338-L356
+"let g:ale_hover_to_preview
+" Keymaps
+"nnoremap <silent> <Leader>le <Cmd>lopen<CR>
+"nnoremap <silent> <Leader>lr <Cmd>ALERename<CR>
+"nnoremap <silent> <Leader>la <Cmd>ALECodeAction<CR>
+"nnoremap <silent> <Leader>ld <Cmd>ALEGoToDefinition<CR>
+"nnoremap <silent> <Leader>lf <Cmd>ALEFix<CR>
+"nnoremap <silent> <Leader>lh <Cmd>ALEHover<CR>
+"nnoremap <silent> <Leader>li <Cmd>ALEInfo<CR>
+"nnoremap K :ALEHover<cr>
+"nnoremap <C-]> :ALEGoToDefinition<cr>
+"nnoremap <C-[> :ALEFindReferences<cr>
+
+"let g:ale_fixers = { 'rust': ['rustfmt', 'trim_whitespace', 'remove_trailing_lines'] }
 "Gary Bernhardt
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
@@ -83,20 +153,25 @@ let wiki_global = {}
 let wiki_global.syntax = 'markdown'
 let wiki_global.ext = '.md'
 let wiki_global.auto_diary_index = 1
-let wiki_global.path = '~/vimwiki/'
+let wiki_global.path = '$HOME/vimwiki/'
 let wiki_global.diary_rel_path = 'zettel/diary/'
 let wiki_global.auto_tags = 1
 let g:vimwiki_global_ext = 0
 
-let zettel_wiki = copy(wiki_global)
-let zettel_wiki.path = '~/vimwiki/zettel'
-let zettel_wiki.diary_rel_path = 'diary/'
+"let zettel_wiki = copy(wiki_global)
+"let zettel_wiki.path = '$HOME/vimwiki/zettel'
+"let zettel_wiki.diary_rel_path = 'diary/'
 
-let zettel_2021 = copy(wiki_global)
-let zettel_2021.path = '~/vimwiki/2021'
-let zettel_2021.diary_rel_path = '.'
+"let zettel_2021 = copy(wiki_global)
+"let zettel_2021.path = '$HOME/vimwiki/2021'
+"let zettel_2021.diary_rel_path = '.'
 
-let g:vimwiki_list = [wiki_global, zettel_2021, zettel_wiki]
+"let zettel_2022 = copy(wiki_global)
+"let zettel_2022.path = '$HOME/vimwiki/2022'
+"let zettel_2022.diary_rel_path = '.'
+"
+"let g:vimwiki_list = [wiki_global, zettel_2022, zettel_2021, zettel_wiki]
+let g:vimwiki_list = [wiki_global]
 nnoremap <leader>c :Calendar <cr>
 
 command! Tws call Tws()
@@ -104,11 +179,15 @@ command! Tws call Tws()
 " 1st attempt
 "nnoremap <leader>t :lopen<cr><c-k>:VimwikiSearchTags 
 function! Tws()
-    let cmd = input("", ":VimwikiSearchTags ")
+    LET CMD = INput("", ":VimwikiSearchTags ")
     exe cmd
     exec "normal! :lopen\<cr>\<C-W>k"
 endfunction
-nnoremap <leader>t :Tws<cr>
+"nnoremap <leader>t :Tws<cr>
+"nnoremap <leader>t :Ack! -i ":\b<cword>\b:"<cr>
+"replaces the TWS() call ... but saving the command structure
+nnoremap <Leader>t :Ack! -i ::<LEFT>
+"nnoremap <Leader>8 :Ack! -i "\b<cword>\b" <CR>
 
 if has('clipboard')
   if has('unnamedplus')  " When possible use + register for copy-paste
@@ -123,21 +202,6 @@ endif
 "gocode
 let g:go_gocode_unimported_packages = 1
 
-" Write this in your vimrc file
-"let g:ale_lint_on_text_changed = 'never'
-"let g:ale_open_list = 1
-nnoremap <F7> :ALEToggle<cr>
-nnoremap ]a :ALENextWrap<CR>
-nnoremap [a :ALEPreviousWrap<CR>
-nnoremap ]A :ALELast<CR>
-nnoremap [A :ALEFirst<CR>
-
-"ale closed by default
-let g:ale_enabled = 0
-
-" Write this in your vimrc file
-"let g:ale_set_loclist = 0
-"let g:ale_set_quickfix = 1
 
 " ----------------------------------------------------------------------------
 "  Endplug
@@ -225,6 +289,8 @@ set wildignorecase              " Ignore case when completing file names and dir
 	"   6. included files
 set dictionary+=/usr/share/dict/words
 set complete+=k
+" Don't show these file during completion
+set suffixes+=.jpg,.png,.jpeg,.gif,.bak,~,.swp,.swo,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc,.pyc,.pyo,.mod
 
 " ----------------------------------------------------------------------------
 "  Colors
@@ -359,7 +425,7 @@ nnoremap <C-=> <C-w>+
 nnoremap <C--> <C-w>-
 nnoremap <D-LEFT> <C-W><
 nnoremap <A-RIGHT> <C-W>>
-":help key-notation - 
+":help key-notation -
 "http://vimdoc.sourceforge.net/htmldoc/intro.html#notation
 "nnoremap <D-LEFT> <C-W><
 "nnoremap <D-RIGHT> <C-W>>
@@ -397,7 +463,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 " searchs for word under cursor
-nnoremap <Leader>8 :Ack! "\b<cword>\b" <CR>
+nnoremap <Leader>8 :Ack! -i "\b<cword>\b" <CR>
 
 " Loads the session from the current directory if, and only if, no file names
 " were passed in via the command line.
@@ -495,7 +561,7 @@ noremap  <F1> :checktime<cr>
 inoremap <F1> <esc>:checktime<cr>
 
 " File browser style configs
-let g:netrw_liststyle=0         " Thin (change to 3 for tree)
+let g:netrw_liststyle=1         " Thin (change to 3 for tree)
 let g:netrw_banner=0            " No banner
 let g:netrw_altv=1              " Open files on right
 let g:netrw_preview=1           " Open previews vertically
@@ -516,18 +582,25 @@ if has('statusline')
     set laststatus=2                " Always display statusline
 
     " Broken down into easily includeable segments
-    set statusline=%<%f\    " Filename
-    set statusline+=%w%h%m%r " Options
-    set statusline+=%{fugitive#statusline()} "  Git Hotness
-    set statusline+=\ [%{&ff}/%Y]            " filetype
-    set statusline+=\ [%{getcwd()}]          " current dir
-    set statusline+=%=%-14.(%=\:b%n%y%m%r%w\ %l,%c%V%)\ %p%%  " Right aligned file nav info
-    "vimmortal statusline - meh
-    "set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v][vimmortal!]
-    "chris hunt
+    "set statusline=%<%f\    " Filename
+    "set statusline+=%w%h%m%r " Options
+    "set statusline+=%{fugitive#statusline()} "  Git Hotness
+    "set statusline+=\ [%{&ff}/%Y]            " filetype
+    "set statusline+=\ [%{getcwd()}]          " current dir
+    "set statusline+=%=%-14.(%=\:b%n%y%m%r%w\ %l,%c%V%)\ %p%%  " Right aligned file nav info
 
-    set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]
+    "vimmortal statusline - meh
+    "set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v][vimmortal!]%=%{hostname}
+
+    "chris hunt
+    set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]%=%{hostname()}
+    "set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]%=%{hostname}
 endif
+
+"let hostname=system('hostname -s | tr -d "\n"')
+"function! hostname()
+
+"endfunction
 " provide hjkl movements in Insert mode via the <Alt> modifier key
 " MacOS alternate characters - https://stackoverflow.com/questions/5379837/is-it-possible-to-mapping-alt-hjkl-in-insert-mode
 " https://stackoverflow.com/questions/7501092/can-i-map-alt-key-in-vim
@@ -587,3 +660,32 @@ iab      liek  like
 " " line vertically in the window when it is arrived at. It's convenient.
 nnoremap ]c ]cz.
 nnoremap [c [cz.
+
+"https://stackoverflow.com/questions/2946051/changing-case-in-vim
+" ~    : Changes the case of current character
+
+ "guu  : Change current line from upper to lower.
+
+ "gUU  : Change current LINE from lower to upper.
+
+ "guw  : Change to end of current WORD from upper to lower.
+
+ "guaw : Change all of current WORD to lower.
+
+ "gUw  : Change to end of current WORD from lower to upper.
+
+ "gUaw : Change all of current WORD to upper.
+
+ "g~~  : Invert case to entire line
+
+ "g~w  : Invert case to current WORD
+
+ "guG  : Change to lowercase until the end of document.
+
+ "gU)  : Change until end of sentence to upper case
+
+ "gu}  : Change to end of paragraph to lower case
+
+ "gU5j : Change 5 lines below to upper case
+
+ "gu3k : Change 3 lines above to lower case
