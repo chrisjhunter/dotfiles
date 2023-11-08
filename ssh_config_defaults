@@ -1,0 +1,16 @@
+Host <shortname> *fuzzy* *match* *syntax*
+    Hostname %h-server-%h.cloud.com
+	User <name>
+    LocalForward <port> <host>
+    ProxyCommand nc $(echo %h | cut -d - -f1,4,6-) %p
+
+Host *
+    PreferredAuthentications publickey,password
+    TCPKeepAlive yes
+    ForwardAgent yes
+    ServerAliveInterval 1
+    Compression yes
+    AddKeysToAgent yes
+    GSSAPIAuthentication no
+
+# comments like this, config reads top to bottom
