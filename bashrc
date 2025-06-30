@@ -8,6 +8,8 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+test -d ~/bash_history/ || mkdir ~/bash_history/
+
 # Fixing agent forwarding with screen
 # https://gist.github.com/martijnvermaat/8070533
 # https://developer.github.com/v3/guides/using-ssh-agent-forwarding/
@@ -85,6 +87,9 @@ HISTTIMEFORMAT='%F %T '
 export HISTSIZE=10000                              # bash history will save N commands
 export HISTFILESIZE=${HISTSIZE}                    # bash will remember N commands
 export HISTCONTROL=ignoreboth                      # ingore duplicates and spaces (ignoreboth, ignoredups, ignorespace)
+#https://www.soberkoder.com/unlimited-bash-history/
+HISTFILE=~/bash_history/$(date +%Y-%m)
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 HISTIGNORE='\&:fg:bg:ls:pwd:cd ..:cd ~-:cd -:cd:jobs:set -x:ls -l:ls -lath'
 #HISTIGNORE=${HISTIGNORE}':%1:%2:shutdown*'         #dunno
 export HISTIGNORE
@@ -150,6 +155,12 @@ shopt -s cmdhist
 # fuzzy find filenames
 function f() {
     find . -iname "*$1*"
+}
+
+#https://github.com/kaihendry/dotfiles/blob/master/.bashrc
+#https://www.soberkoder.com/unlimited-bash-history/
+h() {
+	ack $@ ~/bash_history/*
 }
 
 # open all golang files in subdirectories
@@ -281,6 +292,10 @@ alias ducks='du -cks * |sort -rn |head -11'
 alias tulip='netstat -tulpn'
 #alias tree="ls -ld $PWD/**"
 #alias tree="ls -ld `pwd`/**"
+#alias ls="ls -G"
+#alias ld="ls -ld ./**"
+#https://unix.stackexchange.com/questions/122597/sort-the-files-in-the-directory-recursively-based-on-last-modified-date
+alias tree="ls -dltr **/*"
 alias vtree="tree -I vendor -fNpugshFviC"
 alias ntoe="note"
 alias dmesg="dmesg -T"
@@ -288,8 +303,6 @@ alias dmesg="dmesg -T"
 
 #set for macbook
 # added case above
-#alias ls="ls -G"
-alias ld="ls -ld ./**"
 alias ll="ls -lathr"                     # long, all, human readable, sort by time
 alias lr="ls -lRath"                    # long, all, human readable, sort by time, recursive
 alias lss="ls -laSh"                    # long, all, human readable, sort by size
@@ -299,6 +312,7 @@ alias rm="rm -vi"
 alias rmf="rm -v"
 alias mkdir='mkdir -pv'                  # -p creates parent directories as needed, -v ouputs to console when it does
 alias grep='grep --color'                  # always color
+alias diff='colordiff'
 #alias grep='ack'                  # always color
 alias ..='cd ../'                           # Go back 1 directory level
 alias ...='cd ../../'                       # Go back 2 directory levels
@@ -324,15 +338,19 @@ alias gd='git diff --stat -w'      # Shows file changes
 alias gb='git branch'
 alias gda="git diff"
 alias gac="git commit -am "
-alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'     #git log old
-alias gl='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'  #git log head
-alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
+alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20;echo'     #git log old
+alias gls='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color --stat |head -20;echo'  #git log head
+alias gl='git log --graph --abbrev-commit --color --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)" | head -20;echo'        #git log new
+alias glsa='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color --stat'  #git log head
+alias gln='git log --graph --abbrev-commit --color --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
+#alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
 alias glf='git log  --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new no graph
 alias glc='git log  --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log compare format
 alias glh='git log  --all --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log all compare format
 alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log verbose
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log all
-alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log short
+#alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log short
+alias gli="git log --format='%C(yellow)%h %C(blue)%as%C(auto)%d%Creset %s %C(dim)[%an, %ar]' --graph --topo-order" #ianthehenry
 alias gco='git checkout'           # Checkout a branch or file
 alias main='git checkout master'           # Checkout master branch
 alias gbv='git branch -vvr'           # Checkout master branch
@@ -418,7 +436,8 @@ function test_prompt() {
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
 }
-PROMPT_COMMAND=test_prompt
+PROMPT_COMMAND="test_prompt; $PROMPT_COMMAND"
+#PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 ###################End zsh-like prompt settings ###################################
 
 [[ -s "/home/chunter/.gvm/scripts/gvm" ]] && source "/home/chunter/.gvm/scripts/gvm"
@@ -434,3 +453,13 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 export DENO_INSTALL="/home/chris/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
+
+#[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+#eval "$(atuin init bash)"
+
+#adding atuin to path
+#export PATH="$PATH:$HOME/.atuin/bin"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+source /usr/share/doc/fzf/examples/key-bindings.bash
+source /usr/share/doc/fzf/examples/completion.bash

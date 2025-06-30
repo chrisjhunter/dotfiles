@@ -7,7 +7,7 @@
 ":! go run % -d=debug
 " :find <regex>
 " :b <regex>
-" :%s/\s\+$//e trim whitepsace
+" :%s/\s\+$//e trim whitespace
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
 " vim ** from command line will open all files recursively (-o[N] -O[N] limits the number of splits)
 " opens files only, ignores directory listings
@@ -28,6 +28,9 @@
 " http://vimdoc.sourceforge.net/htmldoc/syntax.html
 "
 " :%!jq .     - Json formatting
+" :!cat -n      - insert numbered list selected text
+" :echo strftime('%c',getftime(expand('%'))) - print last modified timestamp for buffer
+" https://stackoverflow.com/questions/19971023/how-to-go-back-to-previous-opened-file-in-vim
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -53,8 +56,75 @@ Plug 'wlangstroth/vim-racket'
 Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
 Plug 'sheerun/vim-polyglot'
+Plug 'jeetsukumaran/vim-buffergator'
 "Plug 'tbabej/taskwiki' "requires python support
+"Plug 'wellle/context.vim'
 call plug#end()
+
+"https://dmoerner.wordpress.com/2017/08/14/vimwiki-and-git-autocommit/
+function Gitbranch()
+    return system("git branch --show-current")
+endfunction
+
+command! Testgit call Testgit()
+function Testgit()
+    "let day = systemlist('date "+\%F"')[0]
+    let now = strftime("%F", localtime())
+
+    "execute !printf('now - %s',now)
+    "execute !printf('day - %s',day)
+    "execute ":echo day - " day
+    "execute "echo now - " now
+    "echo "gitbranch - " Gitbranch()
+    ":read!date<cr>
+    "execute '!echo "day - "  'date +\%F'
+    "execute !echo 'now - ' now
+
+"-----working-------
+    echo now
+    echo strftime("%F", localtime()  - 24*60*60)
+    echo Gitbranch()
+    echo system("date -d '2 day ago' +'%F'")
+
+    if Gitbranch() != now
+        "echo "welcome to not now"
+    "    execute ":!git switch master || echo master switch failed" 
+        "execute ":!git merge --squash " . Gitbranch()  ." || echo git merge --squash failed"
+        "execute ":!git commit -m 'Auto Squash of ' . Gitbranch() . " || echo git commit autosquash failed"
+    "    execute ":!git checkout -b " . now . " || git checkout " . now
+        "!git switch master;git merge --squash now;git commit -m "Auto Squash of "day;git checkout -b now
+        "au! BufWritePost ~/temp/git/* !git switch master;git merge --squash now;git commit -m "Auto Squash of "day;git checkout -b now
+        "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    else
+        "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    endif
+endfunction
+nnoremap <leader>k :Testgit<cr>
+
+augroup tempgit
+    let day = systemlist('date "+\%F"')[0]
+
+    echo "day - " day
+    echo "gitbranch - " Gitbranch()
+
+    if Gitbranch() != day
+        au! BufWritePost ~/temp/git/* !git switch master;git merge --squash day;git commit -m "Auto Squash of "day;git checkout -b day
+        au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    else
+        au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    endif
+augroup END
+
+augroup vimwiki
+    "let day = systemlist('date "+\%F"')[0]
+
+    "if Gitbranch() != day
+        "au! BufWritePost ~/vimwiki/* !git switch master;git merge --squash day;git commit -m "Auto Squash of "day;git checkout -b day
+        "au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    "else
+        au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    "endif
+augroup END
 
 "Gary Bernhardt
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -165,7 +235,8 @@ set history=10000                " How many commands vim will save
 set ttyfast                     " faster redrawing
 set lazyredraw                  " Redraw only when we need to.
 set magic                       " Set magic on, for regex
-set path+=**                    " For clever completion with the :find command
+"set path+=**                    " For clever completion with the :find command
+set path+=$PWD/**
 set splitright                  " Split vertical windows right to the current windows
 set splitbelow                  " Split horizontal windows below to the current windows
 set nowritebackup               " Changes the default 'save' behavior of Vim, to write buffers direct to file
@@ -225,14 +296,22 @@ set wildignorecase              " Ignore case when completing file names and dir
 	"   6. included files
 set dictionary+=/usr/share/dict/words
 set complete+=k
+"https://stackoverflow.com/questions/12094708/include-a-directory-recursively-for-vim-autocompletion
+"completes words in files in current directory
+"set complete+=k**/*
 
 " ----------------------------------------------------------------------------
 "  Colors
 " ----------------------------------------------------------------------------
 set background=dark
+set term=screen-256color
+"set background=light
 "colorscheme badwolf    "golang cli
 "colorscheme ir_black    "golang cli
 colorscheme monokai_curs    "golang cli
+"colorscheme dracula
+"colorscheme industry
+"colorscheme everblush
 "colorscheme Tomorrow-Night-Bright
 
 " Highlight
@@ -280,8 +359,10 @@ nnoremap <up> gk
 nnoremap <down> gj
 
 " view buffer list
-" using this instead of mini-buff-explorer ... sept 2022
-map <silent> <leader>b :ls<cr>:b
+"using this instead of mini-buff-explorer ... sept 2022
+"map <silent> <leader>b :ls<cr>:b
+"testing out buffergator april 2025
+map <silent> <leader>b :BuffergatorToggle <cr>
 "nnoremap <leader>b :ls<cr>:b
 "nnoremap <leader>b :buffers <cr>
 "nnoremap <leader>b :ls<cr>
@@ -289,8 +370,8 @@ map <silent> <leader>b :ls<cr>:b
 "nnoremap gb :ls<CR>:b<Space>
 
 " open file explorer
-nnoremap <leader>e :Vexplore<CR>
-nnoremap <leader>x :Sex<CR>
+nnoremap <leader>e :Vexplore .<CR>
+nnoremap <leader>x :Sex .<CR>
 
 " Open directory of current file
 nnoremap <leader>f :w!<cr>:e %:h<cr>
@@ -397,7 +478,7 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 " searchs for word under cursor
-nnoremap <Leader>8 :Ack! "\b<cword>\b" <CR>
+nnoremap <Leader>8 :Ack! -i "\b<cword>\b" <CR>
 
 " Loads the session from the current directory if, and only if, no file names
 " were passed in via the command line.
@@ -439,7 +520,7 @@ map <leader>a ggVG
  "}
 
 " Open go doc in vertical window or horizontal
-au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
+autocmd Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
 "au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 
