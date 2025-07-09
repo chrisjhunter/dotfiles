@@ -57,73 +57,100 @@ Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
 Plug 'sheerun/vim-polyglot'
 Plug 'jeetsukumaran/vim-buffergator'
+Plug 'mbbill/undotree'
 "Plug 'tbabej/taskwiki' "requires python support
 "Plug 'wellle/context.vim'
 call plug#end()
 
+let g:undotree_WindowLayout = 2
+nnoremap <F6> :UndotreeToggle<CR>
+
 "https://dmoerner.wordpress.com/2017/08/14/vimwiki-and-git-autocommit/
 function Gitbranch()
-    return system("git branch --show-current")
+    return trim(system("git branch --show-current"))
+endfunction
+function Gitrebase()
+    return system('git rebase --onto '  Gitbranch()  ' master')
+endfunction
+function Gb()
+    return system("git rev-parse --abbrev-ref HEAD")
 endfunction
 
 command! Testgit call Testgit()
 function Testgit()
-    "let day = systemlist('date "+\%F"')[0]
-    let now = strftime("%F", localtime())
+        "let day = systemlist('date "+\%F"')[0]
+        let now = strftime("%F", localtime())
+        let l:current = system('git rev-parse --abbrev-ref HEAD')
+        let brebase = 'git rebase --onto ' . Gitbranch() . ' master'
+        let zbrebase = 'git rebase --onto ' . l:current . ' master'
+        "let current = Gb()
+        let current = Gitbranch()
 
-    "execute !printf('now - %s',now)
-    "execute !printf('day - %s',day)
-    "execute ":echo day - " day
-    "execute "echo now - " now
-    "echo "gitbranch - " Gitbranch()
-    ":read!date<cr>
-    "execute '!echo "day - "  'date +\%F'
-    "execute !echo 'now - ' now
+        "execute !printf('now - %s',now)
+        "execute !printf('day - %s',day)
+        "execute ":echo day - " day
+        "execute "echo now - " now
+        "echo "gitbranch - " Gitbranch()
+        ":read!date<cr>
+        "execute '!echo "day - "  'date +\%F'
+        "execute !echo 'now - ' now
 
-"-----working-------
-    echo now
-    echo strftime("%F", localtime()  - 24*60*60)
-    echo Gitbranch()
-    echo system("date -d '2 day ago' +'%F'")
+    "-----working-------
+        echo now
+        echo strftime("%F", localtime()  - 24*60*60)
+        echo Gitbranch()
+        echo l:current
+        echo system("date -d '2 day ago' +'%F'")
+        echo brebase
+        echo zbrebase
+        "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t."
 
-    if Gitbranch() != now
-        "echo "welcome to not now"
-    "    execute ":!git switch master || echo master switch failed" 
-        "execute ":!git merge --squash " . Gitbranch()  ." || echo git merge --squash failed"
-        "execute ":!git commit -m 'Auto Squash of ' . Gitbranch() . " || echo git commit autosquash failed"
-    "    execute ":!git checkout -b " . now . " || git checkout " . now
-        "!git switch master;git merge --squash now;git commit -m "Auto Squash of "day;git checkout -b now
-        "au! BufWritePost ~/temp/git/* !git switch master;git merge --squash now;git commit -m "Auto Squash of "day;git checkout -b now
-        "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
-    else
-        "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
-    endif
+        "let rebase = ":!git rebase --onto "  current  " master"
+        "echo rebase
+        "
+        "for some reason, this returns the wrong results
+        "https://learnvimscriptthehardway.stevelosh.com/chapters/21.html
+        au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+        if l:current != now
+            execute ':!git switch master'
+            "echo Gitrebase()
+            "execute $rebase
+            "call system("git rebase --onto "  current  " master")
+            execute ":!git merge --squash " . current  . " || echo git merge --squash failed"
+            execute ":!git commit -m 'Auto Squash of '" . current . " || echo git commit autosquash failed"
+            "execute ':!git rebase --onto ' . current .  ' master'
+            "execute ':!git rebase --onto ' . Gitbranch .  ' master'
+            "execute ':!git rebase --onto ' . l:current .  ' master'
+            "execute ':!git merge --squash ' . current
+            "execute ':!git commit -m 'Auto Squash of '' . current
+            execute ':!git checkout -b ' . now . ' || git checkout ' . now
+            "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+        "else
+            "au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+        endif
 endfunction
+augroup testgit
+        au! BufWritePost ~/temp/git/* call Testgit()
+augroup END
 nnoremap <leader>k :Testgit<cr>
 
-augroup tempgit
-    let day = systemlist('date "+\%F"')[0]
+function ZettleAutoSave()
+    let now = strftime("%F", localtime())
 
-    echo "day - " day
-    echo "gitbranch - " Gitbranch()
-
-    if Gitbranch() != day
-        au! BufWritePost ~/temp/git/* !git switch master;git merge --squash day;git commit -m "Auto Squash of "day;git checkout -b day
-        au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+    if Gitbranch() != now
+        execute ":!git switch master || echo master switch failed"
+        execute ":!git merge --squash " . current  . " || echo git merge --squash failed"
+        execute ":!git commit -m 'Auto Squash of '" . current . " || echo git commit autosquash failed"
+        execute ":!git checkout -b " . now . " || git checkout " . now
+        au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t."
     else
-        au! BufWritePost ~/temp/git/* !git add "%";git commit -m "Auto commit of %:t." "%"
+        au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t."
     endif
-augroup END
+endfunction
 
 augroup vimwiki
-    "let day = systemlist('date "+\%F"')[0]
-
-    "if Gitbranch() != day
-        "au! BufWritePost ~/vimwiki/* !git switch master;git merge --squash day;git commit -m "Auto Squash of "day;git checkout -b day
-        "au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t." "%"
-    "else
-        au! BufWritePost ~/vimwiki/* !git add "%";git commit -m "Auto commit of %:t." "%"
-    "endif
+        "au! BufWritePost ~/vimwiki/* :call ZettleAutoSave()
+        "au! BufWritePost ~/vimwiki/**/* !git add "%";git commit -m "Auto commit of %:t."
 augroup END
 
 "Gary Bernhardt
