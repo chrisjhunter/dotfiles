@@ -608,3 +608,15 @@ iab      liek  like
 " " line vertically in the window when it is arrived at. It's convenient.
 nnoremap ]c ]cz.
 nnoremap [c [cz.
+
+" work with rridgeway to find copy/pasta hidden chars, json, postman
+" %s/ /FFFF/g
+" %s/<09>/FFFF/g
+" %s/<09>/TTTTT/g
+augroup Hiunicode
+  autocmd!
+  autocmd BufEnter *
+      \ syntax match nonascii "[^\x00-\x7F]" |
+      \ highlight nonascii ctermfg=NONE ctermbg=red
+augroup END
+
