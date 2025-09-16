@@ -15,3 +15,5 @@ export PATH=~/bin:$PATH:$HOME/.local/bin
 . "$HOME/.cargo/env"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+. "$HOME/.atuin/bin/env"
