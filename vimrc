@@ -6,6 +6,9 @@
 " ----------------------------------------------------------------------------
 ":! go run % -d=debug
 " :find <regex>
+" :sfind *
+" https://stackoverflow.com/questions/23976517/vim-find-command-how-to-list-all-matched-files
+" :vert sfind *
 " :b <regex>
 " :%s/\s\+$//e trim whitespace
 " :args /<path to directory>/* open multiple files at once, after you're inside vim
@@ -26,11 +29,15 @@
 " :term - ctrl-w + (shift)N = normal mode
 " /usr/bin/vim -u NONE
 " http://vimdoc.sourceforge.net/htmldoc/syntax.html
-"
+" <ctrl-a> - increment
+" g<Ctrl-a> twice- while highlighting column, counts up
 " :%!jq .     - Json formatting
 " :!cat -n      - insert numbered list selected text
 " :echo strftime('%c',getftime(expand('%'))) - print last modified timestamp for buffer
 " https://stackoverflow.com/questions/19971023/how-to-go-back-to-previous-opened-file-in-vim
+" .viminfo.tmp - Those files are created during a crash. I'm not sure if they
+" are safe to discard or not, though. -
+" https://www.reddit.com/r/vim/comments/c5b9ds/viminfotmp/
 
 " ----------------------------------------------------------------------------
 " Vimplug
@@ -41,7 +48,7 @@ Plug 'tpope/vim-fugitive'       "vim git plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'     "handful of tpope pair mappings that I like
 Plug 'tpope/vim-vinegar'        "Press - in any buffer to hop up to the directory listing, replaces nerdtree
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }      "default vim-go plugin, update binaries required on new hosts already has delve support
 Plug 'vim-ruby/vim-ruby'        "vim ruby plugin
 Plug 'rust-lang/rust.vim'
 Plug 'mileszs/ack.vim'          "vim grep replacement
@@ -51,7 +58,7 @@ Plug 'junegunn/vim-peekaboo'    "Peekaboo extends \" and @ in normal mode and <C
 Plug 'airblade/vim-gitgutter'   "shows git changes +-~ near the line numbers
 Plug 'vim-scripts/scratch.vim'  "creates scratch buffer
 Plug 'w0rp/ale'
-Plug 'plasticboy/vim-markdown'
+Plug 'tpope/vim-markdown'
 Plug 'wlangstroth/vim-racket'
 Plug 'mattn/calendar-vim'
 Plug 'vimwiki/vimwiki'
@@ -88,37 +95,47 @@ endfunction
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
-" Vim Wiki
-let wiki_global = {}
-let wiki_global.syntax = 'markdown'
-let wiki_global.ext = '.md'
-let wiki_global.auto_diary_index = 1
-let wiki_global.path = '~/vimwiki/'
-let wiki_global.diary_rel_path = 'zettel/diary/'
-let wiki_global.auto_tags = 1
-let g:vimwiki_global_ext = 0
+if isdirectory("~/vimwiki/")
+    " Vim Wiki
+    let wiki_global = {}
+    let wiki_global.syntax = 'markdown'
+    let wiki_global.ext = '.md'
+    let wiki_global.auto_diary_index = 1
+    let wiki_global.path = '~/vimwiki/'
+    let wiki_global.diary_rel_path = 'zettel/diary/'
+    let wiki_global.auto_tags = 1
+    let g:vimwiki_global_ext = 0
 
-let zettel_wiki = copy(wiki_global)
-let zettel_wiki.path = '~/vimwiki/zettel'
-let zettel_wiki.diary_rel_path = 'diary/'
+    let zettel_wiki = copy(wiki_global)
+    let zettel_wiki.path = '~/vimwiki/zettel'
+    let zettel_wiki.diary_rel_path = 'diary/'
 
-let zettel_2021 = copy(wiki_global)
-let zettel_2021.path = '~/vimwiki/2021'
-let zettel_2021.diary_rel_path = '.'
+    let zettel_2021 = copy(wiki_global)
+    let zettel_2021.path = '~/vimwiki/2021'
+    let zettel_2021.diary_rel_path = '.'
+    let g:vimwiki_list = [wiki_global, zettel_2021, zettel_wiki]
 
-let g:vimwiki_list = [wiki_global, zettel_2021, zettel_wiki]
+    command! Tws call Tws()
+    "https://superuser.com/questions/701555/vimscript-how-can-i-call-a-function-but-wait-for-user-input-before-executing-it
+    " 1st attempt
+    "nnoremap <leader>t :lopen<cr><c-k>:VimwikiSearchTags 
+    function! Tws()
+        let cmd = input("", ":VimwikiSearchTags ")
+        exe cmd
+        exec "normal! :lopen\<cr>\<C-W>k"
+    endfunction
+    nnoremap <leader>t :Tws<cr>
+    nnoremap <silent> <leader>ei :e ~/vimwiki/index.md<CR>
+    nnoremap <silent> <leader>ed :e ~/vimwiki/zettel/diary/diary.md<CR>
+endif
+
 nnoremap <leader>c :Calendar <cr>
 
-command! Tws call Tws()
-"https://superuser.com/questions/701555/vimscript-how-can-i-call-a-function-but-wait-for-user-input-before-executing-it
-" 1st attempt
-"nnoremap <leader>t :lopen<cr><c-k>:VimwikiSearchTags 
-function! Tws()
-    let cmd = input("", ":VimwikiSearchTags ")
-    exe cmd
-    exec "normal! :lopen\<cr>\<C-W>k"
-endfunction
-nnoremap <leader>t :Tws<cr>
+
+
+"nnoremap <F4> :UndotreeToggle<CR>
+"let g:undotree_WindowLayout = 2
+"let g:undotree_DiffCommand = "diffthis"
 
 if has('clipboard')
   if has('unnamedplus')  " When possible use + register for copy-paste
@@ -136,6 +153,7 @@ let g:go_gocode_unimported_packages = 1
 " Write this in your vimrc file
 "let g:ale_lint_on_text_changed = 'never'
 "let g:ale_open_list = 1
+"let g:ale_keep_list_window_open = 0
 nnoremap <F7> :ALEToggle<cr>
 nnoremap ]a :ALENextWrap<CR>
 nnoremap [a :ALEPreviousWrap<CR>
@@ -143,7 +161,7 @@ nnoremap ]A :ALELast<CR>
 nnoremap [A :ALEFirst<CR>
 
 "ale closed by default
-let g:ale_enabled = 0
+"let g:ale_enabled = 1
 
 " Write this in your vimrc file
 "let g:ale_set_loclist = 0
@@ -160,7 +178,7 @@ filetype plugin indent on       " Turn on filetype detection, plugin and indent.
 set syntax=enable
 set nomodeline                  "CVE-2016-1248 user perm vulnerablity
 set nocompatible                " Ignore's vi compatablity
-set wrap
+set nowrap
 set linebreak
 set nolist
 set bs=indent,eol,start     " Backspace over everything in insert mode
@@ -247,12 +265,13 @@ set background=dark
 set term=screen-256color
 "set background=light
 "colorscheme badwolf    "golang cli
+"colorscheme ir_dark_gray    "golang cli
 "colorscheme ir_black    "golang cli
-colorscheme monokai_curs    "golang cli
 "colorscheme dracula
 "colorscheme industry
 "colorscheme everblush
-"colorscheme Tomorrow-Night-Bright
+"colorscheme monokai_curs    "golang cli
+colorscheme Tomorrow-Night-Bright
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -387,6 +406,9 @@ nnoremap <A-RIGHT> <C-W>>
 
 "go specific stuffs
 let g:go_fmt_command = "goimports"
+
+" disable fmt on save
+"let g:go_fmt_autosave = 0
 let g:go_version_warning = 0
 
 "Toggle line nums + relative nums on / off
@@ -397,8 +419,6 @@ nnoremap <silent><leader>h :set hls! hls? <cr>
 nnoremap <silent> <leader>eb :e ~/.bashrc<CR>
 nnoremap <silent> <leader>es :e ~/.ssh/config<CR>
 nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
-nnoremap <silent> <leader>ei :e ~/vimwiki/index.md<CR>
-nnoremap <silent> <leader>ed :e ~/vimwiki/zettel/diary/diary.md<CR>
 nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
 
 "Toggle rainbow parens on / off
@@ -537,17 +557,18 @@ if has('statusline')
     set laststatus=2                " Always display statusline
 
     " Broken down into easily includeable segments
-    set statusline=%<%f\    " Filename
-    set statusline+=%w%h%m%r " Options
-    set statusline+=%{fugitive#statusline()} "  Git Hotness
-    set statusline+=\ [%{&ff}/%Y]            " filetype
-    set statusline+=\ [%{getcwd()}]          " current dir
-    set statusline+=%=%-14.(%=\:b%n%y%m%r%w\ %l,%c%V%)\ %p%%  " Right aligned file nav info
+    "set statusline=%<%f\    " Filename
+    "set statusline+=%w%h%m%r " Options
+    "set statusline+=%{fugitive#statusline()} "  Git Hotness
+    "set statusline+=\ [%{&ff}/%Y]            " filetype
+    "set statusline+=\ [%{getcwd()}]          " current dir
+    "set statusline+=%=%-14.(%=\:b%n%y%m%r%w\ %l,%c%V%)\ %p%%  " Right aligned file nav info
     "vimmortal statusline - meh
     "set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v][vimmortal!]
     "chris hunt
 
-    set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]
+    "set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]
+    set statusline=%F%m%r%h%w\ %{fugitive#statusline()}\ [%l,%c]\ [%L,%p%%]%=%{hostname()}
 endif
 " provide hjkl movements in Insert mode via the <Alt> modifier key
 " MacOS alternate characters - https://stackoverflow.com/questions/5379837/is-it-possible-to-mapping-alt-hjkl-in-insert-mode
