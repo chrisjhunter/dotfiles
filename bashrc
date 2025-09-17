@@ -51,6 +51,7 @@ habitlog() {
 #Busy, a joke to friends
 alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 alias chess="telnet freechess.org"
+alias gbs=git-branch-status
 
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 export TASKDDATA=/var/lib/taskd
@@ -312,7 +313,7 @@ alias rm="rm -vi"
 alias rmf="rm -v"
 alias mkdir='mkdir -pv'                  # -p creates parent directories as needed, -v ouputs to console when it does
 alias grep='grep --color'                  # always color
-alias diff='colordiff'
+alias diff='diff --color'
 #alias grep='ack'                  # always color
 alias ..='cd ../'                           # Go back 1 directory level
 alias ...='cd ../../'                       # Go back 2 directory levels
@@ -330,7 +331,7 @@ alias vs="vim ~/.ssh/config"
 
 
 ####################### git aliases ###################
-alias grin="grep -rn --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
+alias grin="grep -rnI --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
 alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
 alias gsc="sub-status"
 alias gs="git status"
@@ -441,7 +442,7 @@ PROMPT_COMMAND="test_prompt; $PROMPT_COMMAND"
 ###################End zsh-like prompt settings ###################################
 
 [[ -s "/home/chunter/.gvm/scripts/gvm" ]] && source "/home/chunter/.gvm/scripts/gvm"
-. "$HOME/.cargo/env"
+[[ -s "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 [[ -s "/home/chris/.gvm/scripts/gvm" ]] && source "/home/chris/.gvm/scripts/gvm"
 
