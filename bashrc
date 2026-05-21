@@ -10,8 +10,15 @@ if [ -f /etc/bashrc ]; then
 	. /etc/bashrc
 fi
 
+# Add this to your ~/.bashrc
+if [ -f ~/.bashrc_work ]; then
+    source ~/.bashrc_work
+fi
+
 test -d ~/bash_history/ || mkdir ~/bash_history/
 
+#https://docs.github.com/en/authentication/troubleshooting-ssh/error-permission-denied-publickey
+eval "$(ssh-agent)"
 # Fixing agent forwarding with screen
 # https://gist.github.com/martijnvermaat/8070533
 # https://developer.github.com/v3/guides/using-ssh-agent-forwarding/
@@ -164,7 +171,8 @@ function f() {
 #https://github.com/kaihendry/dotfiles/blob/master/.bashrc
 #https://www.soberkoder.com/unlimited-bash-history/
 h() {
-	ack $@ ~/bash_history/*
+    grep -irn --color $@ ~/bash_history/*
+    #ack $@ ~/bash_history/*
 }
 
 # open all golang files in subdirectories
@@ -443,12 +451,12 @@ function build_prompt() {
 #MACOS prompt
 function test_prompt() {
     #PS1="\t \D{%D} $Cyan\$(dirs)"
-    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\W "
-    #PS1="[\h \t $(date +%m/%d/%y)] $Cyan\$(dirs)"
+    #PS1="[\h \t $(date +%m/%d/%y)] $Cyan\W "
+    PS1="[\h \t $(date +%m/%d/%y)] $Cyan\$(dirs)"
     parse_git_status
     PS1+="$(parse_git_branch)$White [\j]$ "
 }
-PROMPT_COMMAND="test_prompt; $PROMPT_COMMAND"
+PROMPT_COMMAND=test_prompt
 #PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 ###################End zsh-like prompt settings ###################################
 
@@ -463,14 +471,6 @@ export PATH="$PATH:$HOME/.rvm/bin"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export DENO_INSTALL="/home/chris/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
-
-#[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-#eval "$(atuin init bash)"
-
-#adding atuin to path
-#export PATH="$PATH:$HOME/.atuin/bin"
 
 #[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # Use the CLI find to get all files, excluding any filepath

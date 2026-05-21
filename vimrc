@@ -201,7 +201,12 @@ set nowrap
 set linebreak
 set nolist
 set bs=indent,eol,start     " Backspace over everything in insert mode
-set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
+" small indicators for long lines cut off by screen / window size
+"set listchars=extends:>,precedes:<
+"set listchars=eol:^,tab:-,trail:!,extends:>,precedes:<
+" original
+"set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
+set listchars=tab:-,trail:!,extends:>,nbsp:\ ,precedes:<,eol:^
 set nofoldenable                " disable folding
 set modifiable                  " make a buffer modifiable
 set incsearch                   " Lookahead as search pattern is specified
@@ -230,8 +235,6 @@ set expandtab                   " Tabs are spaces
 set shiftwidth=4                " Control how many columns text is indented with the reindent operations (<< and >>)
 set diffopt+=vertical           "open diffs vertically by default
 
-" small indicators for long lines cut off by screen / window size
-set listchars=extends:>,precedes:<
 
 " Persistent undo
 set undofile
@@ -289,9 +292,12 @@ set term=screen-256color
 "colorscheme dracula
 "colorscheme industry
 "colorscheme everblush
-colorscheme monokai_curs    "golang cli
+"colorscheme monokai_curs    "golang cli
+colorscheme badwolf    "golang cli
+"colorscheme ir_black    "golang cli
+"colorscheme dracula    "golang cli
+"colorscheme monokai_curs    "golang cli
 "colorscheme Tomorrow-Night-Bright
-"colorscheme monokai-papertigers
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -421,7 +427,7 @@ nnoremap <C-=> <C-w>+
 nnoremap <C--> <C-w>-
 nnoremap <D-LEFT> <C-W><
 nnoremap <A-RIGHT> <C-W>>
-":help key-notation - 
+":help key-notation -
 "http://vimdoc.sourceforge.net/htmldoc/intro.html#notation
 "nnoremap <D-LEFT> <C-W><
 "nnoremap <D-RIGHT> <C-W>>
@@ -663,4 +669,3 @@ augroup Hiunicode
       \ syntax match nonascii "[^\x00-\x7F]" |
       \ highlight nonascii ctermfg=NONE ctermbg=red
 augroup END
-
