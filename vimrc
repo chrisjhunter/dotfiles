@@ -67,7 +67,23 @@ Plug 'jeetsukumaran/vim-buffergator'
 Plug 'mbbill/undotree'
 "Plug 'tbabej/taskwiki' "requires python support
 "Plug 'wellle/context.vim'
+Plug 'puremourning/vimspector'
 call plug#end()
+
+
+nnoremap <Leader>dd :call vimspector#Launch()<CR>
+nnoremap <Leader>de :call vimspector#Reset()<CR>
+nnoremap <Leader>dc :call vimspector#Continue()<CR>
+
+nnoremap <Leader>dt :call vimspector#ToggleBreakpoint()<CR>
+nnoremap <Leader>dT :call vimspector#ClearBreakpoints()<CR>
+
+nmap <Leader>dk <Plug>VimspectorRestart
+nmap <Leader>dh <Plug>VimspectorStepOut
+nmap <Leader>dl <Plug>VimspectorStepInto
+nmap <Leader>dj <Plug>VimspectorStepOver
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_base_dir='/home/chris/.vim/bundle/vimspector'
 
 let g:undotree_WindowLayout = 2
 nnoremap <F6> :UndotreeToggle<CR>
@@ -95,7 +111,7 @@ endfunction
 inoremap <expr> <tab> InsertTabWrapper()
 inoremap <s-tab> <c-n>
 
-if isdirectory("~/vimwiki/")
+"if isdirectory("~/vimwiki/")
     " Vim Wiki
     let wiki_global = {}
     let wiki_global.syntax = 'markdown'
@@ -104,6 +120,7 @@ if isdirectory("~/vimwiki/")
     let wiki_global.path = '~/vimwiki/'
     let wiki_global.diary_rel_path = 'zettel/diary/'
     let wiki_global.auto_tags = 1
+    let g:vimwiki_markdown_link_ext = 1
     let g:vimwiki_global_ext = 0
 
     let zettel_wiki = copy(wiki_global)
@@ -127,10 +144,12 @@ if isdirectory("~/vimwiki/")
     nnoremap <leader>t :Tws<cr>
     nnoremap <silent> <leader>ei :e ~/vimwiki/index.md<CR>
     nnoremap <silent> <leader>ed :e ~/vimwiki/zettel/diary/diary.md<CR>
-endif
+"endif
 
 nnoremap <leader>c :Calendar <cr>
-
+" conflicts with vim-vinegar hotkey, I never manually toggle ## header levels
+" wasn't respected, so we added silent! nunmap <buffer> - to  ~/.vim/after/ftplugin/vimwiki.vim
+let g:vimwiki_key_mappings = { 'headers': 0 }
 
 
 "nnoremap <F4> :UndotreeToggle<CR>
@@ -270,8 +289,9 @@ set term=screen-256color
 "colorscheme dracula
 "colorscheme industry
 "colorscheme everblush
-"colorscheme monokai_curs    "golang cli
-colorscheme Tomorrow-Night-Bright
+colorscheme monokai_curs    "golang cli
+"colorscheme Tomorrow-Night-Bright
+"colorscheme monokai-papertigers
 
 " Highlight
 let g:go_highlight_functions = 1
@@ -337,7 +357,7 @@ nnoremap <leader>f :w!<cr>:e %:h<cr>
 
 " Karabiner-Eleements, use Fkeys as standard function keys
 " Insert timestamp
-nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
+"nnoremap <S-F5> :pu=strftime('%c')<cr>kddm`yypVr=``jo<cr>
 
 " Insert timestamp
 nnoremap <F5> :read!date<cr>kddA -
@@ -350,7 +370,9 @@ nnoremap <leader><F7> :set spell!<cr>
 nnoremap <leader>q :q!<cr>
 
 " Write file
-nnoremap <leader>s :w<cr>
+"nnoremap <leader>s :w<cr>
+"nnoremap S :%s//gc<LEFT><LEFT><LEFT>
+nnoremap <leader>s :%s/\<<C-r><C-w>\>//gn<CR>
 
 " Write + quit
 nnoremap <leader>z :wq!<cr>
@@ -419,7 +441,8 @@ nnoremap <silent><leader>h :set hls! hls? <cr>
 nnoremap <silent> <leader>eb :e ~/.bashrc<CR>
 nnoremap <silent> <leader>es :e ~/.ssh/config<CR>
 nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
-nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
+nnoremap <silent> <leader>sv :so %<CR>
+"nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
 
 "Toggle rainbow parens on / off
 nnoremap <silent><leader>R :RainbowParenthesesToggle<cr>
@@ -430,7 +453,7 @@ if exists("g:btm_rainbow_color") && g:btm_rainbow_color
 endif
 
 cnoreabbrev Ack Ack!
-nnoremap <Leader>g :Ack! -i<Space>
+nnoremap <Leader>g :Ack! --ignore-dir={~/vimwiki/tshoot/3tb,2tb,3tb} -i<Space>
 
 " These mappings will make it so that going to the next one in a search will
 " center on the line it's found in.
