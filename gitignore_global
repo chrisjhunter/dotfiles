@@ -86,3 +86,8 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+## fzf gitignore
+.git
+
+**/.claude/settings.local.json

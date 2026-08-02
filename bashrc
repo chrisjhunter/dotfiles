@@ -2,6 +2,8 @@
 # echo $STY
 # echo $TMUX
 # history -w        write the current history to the history file
+# reset termial, scrolling history
+# tput rmcup
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -52,6 +54,7 @@ habitlog() {
 alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 alias chess="telnet freechess.org"
 alias gbs=git-branch-status
+alias wtr="curl wttr.in/"
 
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 export TASKDDATA=/var/lib/taskd
@@ -290,13 +293,14 @@ alias godocweb='godoc -http=:6060' # Spawns a godoc web server
 alias ports='sudo lsof -i -P -n | sort -f '   # Displays all processes that are serving or listening on ports, sorted alphabetically
 alias resetmouse='printf '"'"'\e[?1000l'"'" #disable-mouse-reporting-in-a-terminal-session-after-tmux-exits-unexpectedly
 alias ducks='du -cks * |sort -rn |head -11'
+alias ducks2='du -cks -- * | sort -rn | head'
 alias tulip='netstat -tulpn'
 #alias tree="ls -ld $PWD/**"
 #alias tree="ls -ld `pwd`/**"
 #alias ls="ls -G"
 #alias ld="ls -ld ./**"
 #https://unix.stackexchange.com/questions/122597/sort-the-files-in-the-directory-recursively-based-on-last-modified-date
-alias tree="ls -dltr **/*"
+#alias tree="ls -dltr **/*"
 alias vtree="tree -I vendor -fNpugshFviC"
 alias ntoe="note"
 alias dmesg="dmesg -T"
@@ -331,6 +335,13 @@ alias vs="vim ~/.ssh/config"
 
 
 ####################### git aliases ###################
+alias gun='~/dotfiles/git-untracked.sh'
+#function gun(){
+    #for next in $( git ls-files --others --exclude-standard )
+    #do
+        #git --no-pager diff --no-index /dev/null $next
+    #done
+#}
 alias grin="grep -rnI --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
 alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
 alias gsc="sub-status"
@@ -461,6 +472,36 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 #adding atuin to path
 #export PATH="$PATH:$HOME/.atuin/bin"
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+#[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# Use the CLI find to get all files, excluding any filepath
+# containing the string "git".
+#export FZF_DEFAULT_COMMAND='find . -type f ! -path "*git*"'
+
+# Use the CLI fd to respect ignore files (like '.gitignore'),
+# display hidden files, and exclude the '.git' directory.
+#export FZF_DEFAULT_COMMAND='fd . --hidden --exclude ".git"'
+
+# Use the CLI ripgrep to respect ignore files (like '.gitignore'),
+# display hidden files, and exclude the '.git' directory.
+#export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+#export FZF_DEFAULT_COMMAND='rg —files —hidden -g !.git/'
+# .zshrc
+#export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.{cache,DS_Store,gem,git,npm,parallel,Trash,vscode-oss}' --exclude '{Library,Music,node_modules,Pictures}/' --color always"
+export FZF_DEFAULT_COMMAND='find . \! \( -type d -path ./.git -prune \) \! -type d \! -name '\''*.tags'\'' -printf '\''%P\n'\'
+
 source /usr/share/doc/fzf/examples/key-bindings.bash
 source /usr/share/doc/fzf/examples/completion.bash
+
+# Load pyenv automatically by appending
+# the following to
+# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
+# and ~/.bashrc (for interactive shells) :
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
+
+# https://github.com/GitAlias/gitalias/tree/main/doc/install
+# I copied the commands I wanted to satisfy the summary alias
+# and pasted into ~/.gitconfig
+# also cloned into ~/repos
