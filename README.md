@@ -1,31 +1,40 @@
 # dotfiles
 
-cobbled together with snippets from: statico, samwho, cjhveal, junegunn,
-george ornbo, tpope, snow-dev, devinrm/thottbot, trishume, skwp,
-stephpy, connermcd, coolaj86, doug black, victor engmark, amix vim,
-mcantor, jfrazelle, nicknisi, damian-conway, benjamin g, stevelosh,
-witzel3, sam rowe, kring ag, jose de la o, devaudio, sclark, pfalso,
-sleuth, random hackernews and tnowalk
+## Setup
 
-
-## vim git diff workflow
-vim $(git diff <hash> --name-only)
-:Gvdiff <hash>
-
-## How to setup configs
+Run the install script (safe to re-run any time to pick up updates):
 
 ```
-ln -s ~/dotfiles/screenrc ~/.screenrc
-ln -s ~/dotfiles/bashrc ~/.bashrc
-ln -s ~/dotfiles/vimrc ~/.vimrc
-ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/dotfiles/bash_profile ~/.bash_profile
-ln -s ~/dotfiles/inputrc ~/.inputrc
-ln -s ~/dotfiles/gitignore_global ~/.gitignore_global
-mkdir -p $HOME/go/{bin,src,pkg}
-mkdir -p $HOME/.vim/{autoload,bundle,colors,doc,plugin}
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
+git clone <this repo> ~/dotfiles
+~/dotfiles/install.sh
 ```
-:PlugInstall
+
+It will:
+- `git pull` the repo first (if it's a git checkout)
+- copy (not symlink) `screenrc`, `bashrc`, `vimrc`, `tmux.conf`, `bash_profile`,
+  `inputrc`, `gitignore_global`, `ackrc`, `.gitconfig`, and the vim colorschemes
+  into `$HOME` — files are copied on purpose, so a stray `git pull` in this repo
+  can never silently change your live configs
+- back up anything that already exists at those paths (and differs from the
+  repo's copy) into `~/.dotfiles_backup/<YYYY-MM-DD_HH-MM-SS>/` first
+- create `$HOME/go/{bin,src,pkg}` and `$HOME/.vim/{autoload,bundle,colors,doc,plugin}`
+- fetch `vim-plug` if it isn't already installed
+
+Since configs are copied, re-run `install.sh` any time you want to pick up
+changes made in the repo — it won't happen automatically.
+
+Then inside vim run `:PlugInstall`.
+
+## What's in here
+
+- `bashrc`, `bash_profile`, `inputrc`, `vimrc`, `tmux.conf`, `screenrc`,
+  `ackrc`, `gitignore_global`, `.gitconfig` — the configs `install.sh` deploys
+- `colors/` — vim colorschemes, deployed to `~/.vim/colors`
+- `git-info.sh` — print remote/branch/config info for the current git repo
+- `git-untracked.sh` — diff untracked files against `/dev/null` (aliased as `gun`)
+- `timesheet.sh` — generate a weekly Taskwarrior timesheet report
+- `daily_commit.sh` — auto-commit `~/vimwiki` for the day
+
+## Docs
+
+- [vim git diff workflow](docs/vim-git-diff-workflow.md)
