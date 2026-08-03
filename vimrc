@@ -206,7 +206,7 @@ set bs=indent,eol,start     " Backspace over everything in insert mode
 "set listchars=eol:^,tab:-,trail:!,extends:>,precedes:<
 " original
 "set listchars=tab:\ \ ,trail:-,extends:>,nbsp:\ ,precedes:<
-set listchars=tab:-,trail:!,extends:>,nbsp:\ ,precedes:<,eol:^
+set listchars=tab:-\ ,trail:!,extends:>,nbsp:\ ,precedes:<,eol:^
 set nofoldenable                " disable folding
 set modifiable                  " make a buffer modifiable
 set incsearch                   " Lookahead as search pattern is specified
