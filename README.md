@@ -38,5 +38,3 @@ Then inside vim run `:PlugInstall`.
 ## Docs
 
 - [vim git diff workflow](docs/vim-git-diff-workflow.md)
-
-<!-- branch protection test, safe to remove -->
