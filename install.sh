@@ -23,10 +23,17 @@ declare -A FILES=(
 
 backup_if_needed() {
   local target="$1" src="$2"
+  if [ -L "$target" ]; then
+    mkdir -p "$BACKUP_DIR"
+    BACKED_UP=true
+    echo "Replacing symlink $target -> $BACKUP_DIR/"
+    mv "$target" "$BACKUP_DIR/"
+    return
+  fi
   if [ -e "$target" ] && cmp -s "$target" "$DOTFILES_DIR/$src"; then
     return
   fi
-  if [ -e "$target" ] || [ -L "$target" ]; then
+  if [ -e "$target" ]; then
     mkdir -p "$BACKUP_DIR"
     BACKED_UP=true
     echo "Backing up $target -> $BACKUP_DIR/"
