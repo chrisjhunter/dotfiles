@@ -2,29 +2,25 @@
 # echo $STY
 # echo $TMUX
 # history -w        write the current history to the history file
-# reset termial, scrolling history
+# reset terminal, scrolling history
 # tput rmcup
+#
+#set -e
 
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
-fi
-
-# Add this to your ~/.bashrc
-if [ -f ~/.bashrc_work ]; then
-    source ~/.bashrc_work
-fi
 
 test -d ~/bash_history/ || mkdir ~/bash_history/
 
-#https://docs.github.com/en/authentication/troubleshooting-ssh/error-permission-denied-publickey
-eval "$(ssh-agent)"
-# Fixing agent forwarding with screen
-# https://gist.github.com/martijnvermaat/8070533
-# https://developer.github.com/v3/guides/using-ssh-agent-forwarding/
-if [ -S "$SSH_AUTH_SOCK" ] && [ ! -h "$SSH_AUTH_SOCK" ]; then
-    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+# SSH Agent — reuse existing or start one (no orphans)
+_ssh_agent_env=~/.ssh/agent.env
+if [ -f "$_ssh_agent_env" ]; then
+  . "$_ssh_agent_env" >/dev/null
 fi
+if ! kill -0 "$SSH_AGENT_PID" 2>/dev/null; then
+  eval "$(ssh-agent)" >/dev/null
+  echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" > "$_ssh_agent_env"
+  echo "export SSH_AGENT_PID=$SSH_AGENT_PID" >> "$_ssh_agent_env"
+fi
+unset _ssh_agent_env
 
 # Detect the platform (similar to $OSTYPE)
 OS="`uname`"
@@ -32,6 +28,17 @@ case $OS in
   'Linux')
     OS='Linux'
     alias ls='ls --color=auto'
+    # FZF (if available)
+    [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+    [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
+    # pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    command -v pyenv &>/dev/null && eval "$(pyenv init - bash)"
+    # gvm
+    [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+    # rvm
+    export PATH="$PATH:$HOME/.rvm/bin"
     ;;
   'FreeBSD')
     OS='FreeBSD'
@@ -51,19 +58,13 @@ case $OS in
   *) ;;
 esac
 
-#https://oscarnajera.com/2020/10/fun-with-rofi-and-guile-a-minimal-habit-tracker/
-habitlog() {
-    echo $(date +%s),${2:-1} >> "$HOME/habits/${1:-myhabit}.csv"
-}
-
 # https://gitlab.com/GasparVardanyan/dotfiles/-/blob/master/dotfiles/zsh/.zshrc
 #Busy, a joke to friends
 alias busy="cat /dev/urandom | hexdump -C | grep 'ca fe'"
 alias chess="telnet freechess.org"
-alias gbs=git-branch-status
+alias gbs='git-branch-status'
 alias wtr="curl wttr.in/"
 
-export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
 export TASKDDATA=/var/lib/taskd
 export EDITOR=vim
 alias in="task add +inbox"
@@ -114,7 +115,7 @@ fi
 export GODEBUG=cgocheck=0
 
 # add go to path
-export PATH=$PATH:/usr/local/go/bin:/home/chris/go/bin:/usr/local/bin/
+export PATH=$PATH:/home/chris/go/bin:/usr/local/go/bin:/usr/local/bin/
 
 # couldnt find working directory gopls vimgo
 #let g:go_null_module_warning = 0
@@ -161,6 +162,11 @@ shopt -s cmdhist
 # auto cd to dir name
 # shopt -s autocd
 ################FUNCTIONS##########################
+
+#https://oscarnajera.com/2020/10/fun-with-rofi-and-guile-a-minimal-habit-tracker/
+habitlog() {
+    echo $(date +%s),${2:-1} >> "$HOME/habits/${1:-myhabit}.csv"
+}
 
 #alias f="find . \"*$1*\""
 # fuzzy find filenames
@@ -306,7 +312,7 @@ alias tulip='netstat -tulpn'
 #alias tree="ls -ld $PWD/**"
 #alias tree="ls -ld `pwd`/**"
 #alias ls="ls -G"
-#alias ld="ls -ld ./**"
+alias ld="ls -ld ./**"
 #https://unix.stackexchange.com/questions/122597/sort-the-files-in-the-directory-recursively-based-on-last-modified-date
 #alias tree="ls -dltr **/*"
 alias vtree="tree -I vendor -fNpugshFviC"
@@ -344,13 +350,7 @@ alias vs="vim ~/.ssh/config"
 
 ####################### git aliases ###################
 alias gun='~/dotfiles/git-untracked.sh'
-#function gun(){
-    #for next in $( git ls-files --others --exclude-standard )
-    #do
-        #git --no-pager diff --no-index /dev/null $next
-    #done
-#}
-alias grin="grep -rnI --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
+alias grin="grep -rn --ignore-case --color --exclude-dir={.git,.svn,honnef.co,golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor} --exclude=.session.vim"
 alias ggrep="grep --exclude-dir={golang.org,github.com,code.google.com,gopkg.in,9fans.net,.vendor,vendor}"
 alias gsc="sub-status"
 alias gs="git status"
@@ -358,26 +358,116 @@ alias gd='git diff --stat -w'      # Shows file changes
 alias gb='git branch'
 alias gda="git diff"
 alias gac="git commit -am "
-alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20;echo'     #git log old
-alias gls='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color --stat |head -20;echo'  #git log head
-alias gl='git log --graph --abbrev-commit --color --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)" | head -20;echo'        #git log new
-alias glsa='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color --stat'  #git log head
-alias gln='git log --graph --abbrev-commit --color --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
-#alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
+alias glo='git log --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'     #git log old
+alias gl='git log -n20 --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color'  #git log head
+#alias gl='git log --graph --pretty=format:"%C(bold blue)%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit --color |head -20'  #git log head
+alias gln='git log --graph --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new
 alias glf='git log  --abbrev-commit --decorate --format=format:"%C(bold blue)%h%C(reset) - %C(bold green)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"'        #git log new no graph
 alias glc='git log  --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log compare format
 alias glh='git log  --all --abbrev-commit --pretty=format:"%C(bold blue)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) reset"'      #git log all compare format
 alias glv='git log  --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log verbose
 alias gla='git log --all --graph --pretty=format:"%Cred%H%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset" --abbrev-commit' #git log all
-#alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log short
+alias gls="git log  --pretty='format:%H %Cred%d %C(yellow)%ad%Creset %ae %Cgreen%s%Creset' --graph" #git log short
 alias gli="git log --format='%C(yellow)%h %C(blue)%as%C(auto)%d%Creset %s %C(dim)[%an, %ar]' --graph --topo-order" #ianthehenry
 alias gco='git checkout'           # Checkout a branch or file
 alias main='git checkout master'           # Checkout master branch
 alias gbv='git branch -vvr'           # Checkout master branch
 #the next 2x are similar to this view - git log --graph --abbrev-commit --pretty=oneline release/1.1..master
-alias gcomp="diff -y <(git log --oneline ) <(git log --oneline master) |head -20"
-alias gcompa="diff -y <(git log --oneline ) <(git log --oneline master)"
+alias gcomp="diff -y <(git log --oneline master) <(git log --oneline ) |head -20"
+alias gcompa="diff -y <(git log --oneline master) <(git log --oneline )"
+gcompb() {
+    #echo "$1"
+    diff -y <(git log --oneline ) <(git log --oneline $1)
+}
+# kiro implemented funcitons
+gcompr() {
+    local branch1="${1:-master}"
+    local branch2="${2:-$(git branch --show-current)}"
+    diff -y <(git log --oneline "$branch1") <(git log --oneline "$branch2") | head -${3:-20}
+}
 alias gbh="git for-each-ref --sort='-committerdate:iso8601' --format='%(committerdate:relative)|%(refname:short)|%(committername)' refs/remotes/ refs/heads/| column -s '|' -t"
+
+#  Usage:
+#  gdiffbranch master feature-branch
+#  gdiffbranch  # uses defaults
+#  gdiffbranch master feature-branch | less -R  # pager with color
+#  Add | less -R at the end or wrap it with a pause between files if you want to step through them:
+
+gdiffb() {
+	local branch1="${1:-master}"
+	local branch2="${2:-$(git branch --show-current)}"
+	for file in $(git diff "$branch1" "$branch2" --name-only); do
+	  echo "=== $file ==="
+	  diff -y <(git show "$branch1:$file" 2>/dev/null) <(git show "$branch2:$file" 2>/dev/null) | colordiff
+	  echo ""
+	done
+}
+
+gdv() {
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      echo "Usage: gdiffbranch [branch1] [branch2]"
+      echo "  branch1: base branch (default: master)"
+      echo "  branch2: compare branch (default: current branch)"
+      echo "  Diffs each changed file side-by-side between the two branches."
+      return
+    fi
+    local branch1="${1:-master}"
+    local branch2="${2:-$(git branch --show-current)}"
+    for file in $(git diff "$branch1" "$branch2" --name-only); do
+      local in_b1 in_b2
+      in_b1=$(git show "$branch1:$file" 2>/dev/null)
+      in_b2=$(git show "$branch2:$file" 2>/dev/null)
+  
+      if [[ -z "$in_b1" && -n "$in_b2" ]]; then
+        echo "=== $file [NEW in $branch2] ==="
+        diff -y <(echo "") <(echo "$in_b2") | colordiff
+      elif [[ -n "$in_b1" && -z "$in_b2" ]]; then
+        echo "=== $file [DELETED in $branch2] ==="
+        diff -y <(echo "$in_b1") <(echo "") | colordiff
+      else
+        echo "=== $file ==="
+        diff -y <(echo "$in_b1") <(echo "$in_b2") | colordiff
+      fi
+  
+      echo ""
+      read -p "Next file? (q to quit) " ans
+      [[ "$ans" == "q" ]] && break
+    done
+}
+
+gdiffbranch() {
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "Usage: gdiffbranch [branch1] [branch2]"
+  echo "  branch1: base branch (default: master)"
+  echo "  branch2: compare branch (default: current branch)"
+  echo "  Diffs each changed file side-by-side between the two branches."
+  return
+fi
+local branch1="${1:-master}"
+local branch2="${2:-$(git branch --show-current)}"
+(
+  for file in $(git diff "$branch1" "$branch2" --name-only); do
+	local in_b1 in_b2
+	in_b1=$(git show "$branch1:$file" 2>/dev/null || true)
+	in_b2=$(git show "$branch2:$file" 2>/dev/null || true)
+
+	if [[ -z "$in_b1" && -n "$in_b2" ]]; then
+	  echo "=== $file [NEW in $branch2] ==="
+	  diff -y <(echo "") <(echo "$in_b2") | colordiff || true
+	elif [[ -n "$in_b1" && -z "$in_b2" ]]; then
+	  echo "=== $file [DELETED in $branch2] ==="
+	  diff -y <(echo "$in_b1") <(echo "") | colordiff || true
+	else
+	  echo "=== $file ==="
+	  diff -y <(echo "$in_b1") <(echo "$in_b2") | colordiff || true
+	fi
+	echo ""
+  done
+) | less -R
+}
+
+
+
 
 
 #####################ZSH like PS1 below#####################
@@ -460,48 +550,26 @@ PROMPT_COMMAND=test_prompt
 #PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 ###################End zsh-like prompt settings ###################################
 
-[[ -s "/home/chunter/.gvm/scripts/gvm" ]] && source "/home/chunter/.gvm/scripts/gvm"
-[[ -s "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+alias mtr=/opt/homebrew/share/man/man8/mtr.8
 
-[[ -s "/home/chris/.gvm/scripts/gvm" ]] && source "/home/chris/.gvm/scripts/gvm"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
 
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Lazy-load NVM (saves ~4s on shell startup)
+nvm() {
+  unset -f nvm node npm npx
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  nvm "$@"
+}
+node() { nvm use default &>/dev/null; command node "$@"; }
+npm() { nvm use default &>/dev/null; command npm "$@"; }
+npx() { nvm use default &>/dev/null; command npx "$@"; }
+export PATH="$HOME/.local/bin:$PATH"
+# source ~/.bash_profile  # REMOVED: causes circular sourcing hang
 
-#[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-# Use the CLI find to get all files, excluding any filepath
-# containing the string "git".
-#export FZF_DEFAULT_COMMAND='find . -type f ! -path "*git*"'
+# Source work-specific overrides if present
+if [ -f ~/.bashrc_work ]; then
+    source ~/.bashrc_work
+fi
 
-# Use the CLI fd to respect ignore files (like '.gitignore'),
-# display hidden files, and exclude the '.git' directory.
-#export FZF_DEFAULT_COMMAND='fd . --hidden --exclude ".git"'
-
-# Use the CLI ripgrep to respect ignore files (like '.gitignore'),
-# display hidden files, and exclude the '.git' directory.
-#export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-#export FZF_DEFAULT_COMMAND='rg —files —hidden -g !.git/'
-# .zshrc
-#export FZF_DEFAULT_COMMAND="fd --hidden --follow --exclude '.{cache,DS_Store,gem,git,npm,parallel,Trash,vscode-oss}' --exclude '{Library,Music,node_modules,Pictures}/' --color always"
-export FZF_DEFAULT_COMMAND='find . \! \( -type d -path ./.git -prune \) \! -type d \! -name '\''*.tags'\'' -printf '\''%P\n'\'
-
-source /usr/share/doc/fzf/examples/key-bindings.bash
-source /usr/share/doc/fzf/examples/completion.bash
-
-# Load pyenv automatically by appending
-# the following to
-# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
-# and ~/.bashrc (for interactive shells) :
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - bash)"
-
-# https://github.com/GitAlias/gitalias/tree/main/doc/install
-# I copied the commands I wanted to satisfy the summary alias
-# and pasted into ~/.gitconfig
-# also cloned into ~/repos
+# Cargo/Rust
